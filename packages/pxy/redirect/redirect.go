@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Request struct {
@@ -42,22 +44,22 @@ func Main(args map[string]interface{}) (*Response, error) {
 
 func redirect(path string) (string, uint, error) {
 
-	//log.Info().Msgf("Received URL: >%s<", path)
+	log.Infof("Received URL: >%s<", path)
 
 	url, parseErr := url.Parse(path)
 	if parseErr != nil {
-		//log.Error().Msgf("Unable to parse received URL: >%s<", path)
+		log.Errorf("Unable to parse received URL: >%s<", path)
 		return "Unable to process received URL", http.StatusInternalServerError, fmt.Errorf("Unable to parse received URL: >%s<", path)
 	}
 
-	//log.Debug().Msgf("Parsed URL: >%s<", url)
+	log.Debugf("Parsed URL: >%s<", url)
 
 	newURL, assembleErr := assembleNewURL(url)
 	if assembleErr == nil {
-		//log.Info().Msgf("Redirecting to: >%s<", newURL)
+		log.Infof("Redirecting to: >%s<", newURL)
 		return newURL, http.StatusFound, nil
 	} else {
-		//log.Error().Msgf("Unable to assemble URL from: >%s< - %s", url, assembleErr)
+		log.Errorf("Unable to assemble URL from: >%s< - %s", url, assembleErr)
 		return "Unable to assemble URL", http.StatusBadRequest, fmt.Errorf("Unable to assemble URL from: >%s< - %s", newURL, assembleErr)
 	}
 }
@@ -66,7 +68,7 @@ func assembleNewURL(url *url.URL) (string, error) {
 
 	s := strings.SplitN(url.Path, "/", 3)
 
-	//log.Debug().Msgf("Parsed following parts: >%#v<", s)
+	log.Debugf("Parsed following parts: >%#v<", s)
 
 	// 0 is empty because we split on "/" and the URL begins with "/"
 	// 1 == version
