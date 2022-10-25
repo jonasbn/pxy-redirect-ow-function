@@ -1,0 +1,13 @@
+parameters: {}
+environment: {}
+packages:
+  - name: pxy
+    environment: {}
+    parameters: {}
+    actions:
+      - name: redirect
+        main: ''
+        runtime: 'go:default'
+        environment: {}
+        parameters: {}
+

@@ -1,0 +1,14 @@
+spec:
+  alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
+  functions:
+  - github:
+      branch: main
+      deploy_on_push: true
+      repo: jonasbn/pxy-redirect-ow-function
+    name: go-api
+    routes:
+    - path: /
+    source_dir: /
+  name: pxy-redirect
