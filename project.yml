@@ -10,4 +10,12 @@ packages:
         runtime: 'go:default'
         environment: {}
         parameters: {}
-
+  - name: p
+    environment: {}
+    parameters: {}
+    actions:
+      - name: r
+        main: ''
+        runtime: 'go:default'
+        environment: {}
+        parameters: {}
