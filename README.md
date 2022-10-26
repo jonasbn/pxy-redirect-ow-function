@@ -19,7 +19,7 @@ https://<domain>/<version>/tools/clang/docs/DiagnosticsReference.html#<fragment>
 Example:
 
 ```text
-https://pxy.fk/p/r/5/rsanitize-address
+https://pxy.fi/p/r/5/rsanitize-address
 ```
 
 Redirects to:
