@@ -57,7 +57,7 @@ func redirect(path string) (string, uint, error) {
 	newURL, assembleErr := assembleNewURL(url)
 	if assembleErr != nil {
 		log.Errorf("Unable to assemble URL from: >%s< - %s", url, assembleErr)
-		return "", http.StatusBadRequest, fmt.Errorf("Unable to assemble URL from: >%s< - %s", newURL, assembleErr)
+		return "", http.StatusBadRequest, fmt.Errorf("Unable to assemble URL from: >%s< - %s", path, assembleErr)
 	}
 
 	log.Infof("Redirecting to: >%s<", newURL)
