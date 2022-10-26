@@ -9,6 +9,6 @@ packages:
         main: ''
         runtime: 'go:default'
         environment: {
-          LOG_DESTINATIONS: "${LOG_DESTINATIONS}"
+          LOG_DESTINATIONS: '${LOG_DESTINATIONS}'
         }
         parameters: {}
