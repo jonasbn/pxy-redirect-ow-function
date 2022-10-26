@@ -29,7 +29,7 @@ func Main(args map[string]interface{}) *Response {
 	if err != nil {
 		return &Response{
 			StatusCode: int(statuscode),
-			Body:       fmt.Sprintf("%s - %s", url, err),
+			Body:       fmt.Sprintf("%s", err),
 		}
 	}
 
@@ -49,7 +49,7 @@ func redirect(path string) (string, uint, error) {
 	url, parseErr := url.Parse(path)
 	if parseErr != nil {
 		log.Errorf("Unable to parse received URL: >%s<", path)
-		return "Unable to process received URL", http.StatusInternalServerError, fmt.Errorf("Unable to parse received URL: >%s<", path)
+		return "", http.StatusInternalServerError, fmt.Errorf("Unable to parse received URL: >%s<", path)
 	}
 
 	log.Debugf("Parsed URL: >%s<", url)
@@ -57,7 +57,7 @@ func redirect(path string) (string, uint, error) {
 	newURL, assembleErr := assembleNewURL(url)
 	if assembleErr != nil {
 		log.Errorf("Unable to assemble URL from: >%s< - %s", url, assembleErr)
-		return "Unable to assemble URL", http.StatusBadRequest, fmt.Errorf("Unable to assemble URL from: >%s< - %s", newURL, assembleErr)
+		return "", http.StatusBadRequest, fmt.Errorf("Unable to assemble URL from: >%s< - %s", newURL, assembleErr)
 	}
 
 	log.Infof("Redirecting to: >%s<", newURL)
