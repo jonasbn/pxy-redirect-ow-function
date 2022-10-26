@@ -2,9 +2,7 @@ parameters: {}
 environment: {}
 packages:
   - name: p
-    environment: {
-      LOG_DESTINATIONS: "${LOG_DESTINATIONS}"
-    }
+    environment: {}
     parameters: {}
     actions:
       - name: r
