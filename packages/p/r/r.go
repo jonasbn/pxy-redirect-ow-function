@@ -29,6 +29,7 @@ func Main(args map[string]interface{}) *Response {
 	if err != nil {
 		return &Response{
 			StatusCode: int(statuscode),
+			Body:       fmt.Sprintf("%s - %s", url, err),
 		}
 	}
 
