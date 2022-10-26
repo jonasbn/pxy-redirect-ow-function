@@ -29,7 +29,6 @@ func Main(args map[string]interface{}) (*Response, error) {
 	if err != nil {
 		return &Response{
 			StatusCode: int(statuscode),
-			Body:       "error",
 		}, err
 	}
 
