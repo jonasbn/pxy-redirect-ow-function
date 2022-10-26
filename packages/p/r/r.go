@@ -29,7 +29,7 @@ func Main(args map[string]interface{}) (*Response, error) {
 	if err != nil {
 		return &Response{
 			StatusCode: int(statuscode),
-			Body:       fmt.Sprintf("%s - %s", url, err),
+			Body:       "error",
 		}, err
 	}
 
@@ -55,13 +55,14 @@ func redirect(path string) (string, uint, error) {
 	log.Debugf("Parsed URL: >%s<", url)
 
 	newURL, assembleErr := assembleNewURL(url)
-	if assembleErr == nil {
-		log.Infof("Redirecting to: >%s<", newURL)
-		return newURL, http.StatusFound, nil
-	} else {
+	if assembleErr != nil {
 		log.Errorf("Unable to assemble URL from: >%s< - %s", url, assembleErr)
 		return "Unable to assemble URL", http.StatusBadRequest, fmt.Errorf("Unable to assemble URL from: >%s< - %s", newURL, assembleErr)
 	}
+
+	log.Infof("Redirecting to: >%s<", newURL)
+
+	return newURL, http.StatusFound, nil
 }
 
 func assembleNewURL(url *url.URL) (string, error) {
