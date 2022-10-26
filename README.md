@@ -1,6 +1,6 @@
 # pxy-redirect-ow-function
 
-This is an experimental serverless implementation of the [pxy-redirect service][SERVICE].
+This is an experimental serverless implementation of the [pxy-redirect service][SERVICE] I created for deployment on [DigitalOcean][DO].
 
 It's goal is to take a short URL following a required format and redirect to the designated URL.
 
@@ -36,6 +36,12 @@ Please see my [blog post][BLOG] for the long version.
 
 ## Resources and References
 
+- [DigitalOcean][DO]
+- [clang diagnostic flags matrix generator][GENERATOR]
+- [My TIL collection: clang diagnostic flags](https://github.com/jonasbn/til/blob/master/clang/diagnostic_flags.md) (GitHub)
+- [My TIL collection: clang diagnostic flags](http://jonasbn.github.io/til/clang/diagnostic_flags.html) (website)
+
 [GENERATOR]: https://github.com/jonasbn/clang-diagnostic-flags-matrix
 [SERVICE]: https://github.com/jonasbn/pxy-redirect
 [BLOG]: https://dev.to/jonasbn/challenges-solutions-and-more-challenges-and-more-solutions-4j3f
+[DO]: https://www.digitalocean.com/
