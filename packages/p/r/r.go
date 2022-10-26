@@ -20,7 +20,7 @@ type Response struct {
 	Body       string            `json:"body,omitempty"`
 }
 
-func Main(args map[string]interface{}) (*Response, error) {
+func Main(args map[string]interface{}) *Response {
 
 	path := args["__ow_path"].(string)
 
@@ -29,7 +29,7 @@ func Main(args map[string]interface{}) (*Response, error) {
 	if err != nil {
 		return &Response{
 			StatusCode: int(statuscode),
-		}, err
+		}
 	}
 
 	headers := make(map[string]string)
@@ -38,7 +38,7 @@ func Main(args map[string]interface{}) (*Response, error) {
 	return &Response{
 		Headers:    headers,
 		StatusCode: int(http.StatusFound),
-	}, nil
+	}
 }
 
 func redirect(path string) (string, uint, error) {
