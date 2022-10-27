@@ -1,5 +1,7 @@
 parameters: {}
-environment: {}
+environment: {
+  LOG_DESTINATIONS: '${LOG_DESTINATIONS}'
+}
 packages:
   - name: p
     environment: {}
@@ -8,7 +10,5 @@ packages:
       - name: r
         main: ''
         runtime: 'go:default'
-        environment: {
-          LOG_DESTINATIONS: '${LOG_DESTINATIONS}'
-        }
+        environment: {}
         parameters: {}
