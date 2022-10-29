@@ -30,7 +30,7 @@ func Main(args map[string]interface{}) *Response {
 	}
 
 	if url.String() == "/" || url.String() == "/index.html" {
-		log.Infof("Non-redirectable URL >%s< displaying: ", url.String())
+		log.Infof("Non-redirectable URL >%s< served", url.String())
 
 		content, err := os.ReadFile("static/index.html")
 		if err != nil {
