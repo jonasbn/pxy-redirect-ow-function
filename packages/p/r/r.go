@@ -4,15 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
-
-type Request struct {
-	Name string `json:"name"`
-}
 
 type Response struct {
 	StatusCode int               `json:"statusCode,omitempty"`
@@ -24,17 +21,53 @@ func Main(args map[string]interface{}) *Response {
 
 	path := args["__ow_path"].(string)
 
-	url, statuscode, err := redirect(path)
+	url, err := parseRedirectURL(path)
 
 	if err != nil {
 		return &Response{
-			StatusCode: int(statuscode),
+			StatusCode: http.StatusInternalServerError,
+		}
+	}
+
+	if url.String() == "/robots.txt" {
+		content, err := os.ReadFile("static/robots.txt")
+		if err == nil {
+			return &Response{
+				StatusCode: http.StatusOK,
+				Body:       string(content),
+			}
+		}
+	}
+
+	if url.String() == "/favicon.ico" {
+		return &Response{
+			StatusCode: http.StatusNotFound,
+		}
+	}
+
+	if url.String() == "/" {
+		content, err := os.ReadFile("static/index.html")
+		if err == nil {
+			return &Response{
+				StatusCode: http.StatusOK,
+				Body:       string(content),
+			}
+		}
+	}
+
+	targetURL, err := redirect(url)
+
+	if err != nil {
+		return &Response{
+			StatusCode: http.StatusBadRequest,
 			Body:       fmt.Sprintf("%s", err),
 		}
 	}
 
 	headers := make(map[string]string)
-	headers["location"] = url
+	headers["location"] = targetURL
+
+	log.Infof("Redirecting to: >%s<", targetURL)
 
 	return &Response{
 		Headers:    headers,
@@ -42,27 +75,30 @@ func Main(args map[string]interface{}) *Response {
 	}
 }
 
-func redirect(path string) (string, uint, error) {
-
+func parseRedirectURL(path string) (*url.URL, error) {
 	log.Infof("Received URL: >%s<", path)
 
-	url, parseErr := url.Parse(path)
+	redirectURL, parseErr := url.Parse(path)
 	if parseErr != nil {
 		log.Errorf("Unable to parse received URL: >%s<", path)
-		return "", http.StatusInternalServerError, fmt.Errorf("Unable to parse received URL: >%s<", path)
+		return nil, fmt.Errorf("Unable to parse received URL: >%s<", path)
 	}
 
-	log.Debugf("Parsed URL: >%s<", url)
+	log.Debugf("Parsed URL: >%s<", redirectURL)
 
-	newURL, assembleErr := assembleNewURL(url)
-	if assembleErr != nil {
-		log.Errorf("Unable to assemble URL from: >%s< - %s", url, assembleErr)
-		return "", http.StatusBadRequest, fmt.Errorf("Unable to assemble URL from: >%s< - %s", path, assembleErr)
+	return redirectURL, nil
+}
+
+func redirect(url *url.URL) (string, error) {
+
+	newURL, err := assembleNewURL(url)
+
+	if err != nil {
+		log.Errorf("Unable to assemble URL from: >%s< - %s", url.String(), err)
+		return "", fmt.Errorf("Unable to assemble URL from: >%s< - %s", url.String(), err)
 	}
 
-	log.Infof("Redirecting to: >%s<", newURL)
-
-	return newURL, http.StatusFound, nil
+	return newURL, nil
 }
 
 func assembleNewURL(url *url.URL) (string, error) {
@@ -75,8 +111,13 @@ func assembleNewURL(url *url.URL) (string, error) {
 	// 1 == version
 	// 2 == fragment
 
-	if len(s) != 3 {
+	if len(s) < 3 {
 		err := fmt.Errorf("insufficient parts in provided url %q", s)
+		return "", err
+	}
+
+	if len(s) > 3 {
+		err := fmt.Errorf("excessive parts in provided url %q", s)
 		return "", err
 	}
 
