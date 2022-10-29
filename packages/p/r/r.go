@@ -19,6 +19,8 @@ type Response struct {
 
 func Main(args map[string]interface{}) *Response {
 
+	log.SetLevel(log.DebugLevel)
+
 	path := args["__ow_path"].(string)
 
 	url, err := parseRedirectURL(path)
@@ -34,10 +36,14 @@ func Main(args map[string]interface{}) *Response {
 
 		content, err := os.ReadFile("static/index.html")
 		if err != nil {
+			log.Errorf("Unable to read static file from: >%s< - %s", "static/index.html", err)
+
 			return &Response{
 				StatusCode: http.StatusInternalServerError,
 			}
 		}
+		log.Debugf("Read the following contents from static file : >%s<", content, "static/index.html")
+
 		return &Response{
 			StatusCode: http.StatusOK,
 			Body:       string(content),
