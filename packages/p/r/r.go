@@ -29,29 +29,18 @@ func Main(args map[string]interface{}) *Response {
 		}
 	}
 
-	if url.String() == "/robots.txt" {
-		content, err := os.ReadFile("static/robots.txt")
-		if err == nil {
-			return &Response{
-				StatusCode: http.StatusOK,
-				Body:       string(content),
-			}
-		}
-	}
+	if url.String() == "/" || url.String() == "/index.html" {
+		log.Infof("Non-redirectable URL >%s< displaying: ", url.String())
 
-	if url.String() == "/favicon.ico" {
-		return &Response{
-			StatusCode: http.StatusNotFound,
-		}
-	}
-
-	if url.String() == "/" {
 		content, err := os.ReadFile("static/index.html")
-		if err == nil {
+		if err != nil {
 			return &Response{
-				StatusCode: http.StatusOK,
-				Body:       string(content),
+				StatusCode: http.StatusInternalServerError,
 			}
+		}
+		return &Response{
+			StatusCode: http.StatusOK,
+			Body:       string(content),
 		}
 	}
 
@@ -91,17 +80,17 @@ func parseRedirectURL(path string) (*url.URL, error) {
 
 func redirect(url *url.URL) (string, error) {
 
-	newURL, err := assembleNewURL(url)
+	redirectURL, err := assembleRedirectURL(url)
 
 	if err != nil {
 		log.Errorf("Unable to assemble URL from: >%s< - %s", url.String(), err)
 		return "", fmt.Errorf("Unable to assemble URL from: >%s< - %s", url.String(), err)
 	}
 
-	return newURL, nil
+	return redirectURL, nil
 }
 
-func assembleNewURL(url *url.URL) (string, error) {
+func assembleRedirectURL(url *url.URL) (string, error) {
 
 	s := strings.SplitN(url.Path, "/", 3)
 
