@@ -1,10 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 
@@ -15,6 +16,23 @@ type Response struct {
 	StatusCode int               `json:"statusCode,omitempty"`
 	Headers    map[string]string `json:"headers,omitempty"`
 	Body       string            `json:"body,omitempty"`
+}
+
+const tpl = `
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>{{.Title}}</title>
+	</head>
+	<body>
+		<p>{{.Message}}</p>
+	</body>
+</html>`
+
+type TmplData struct {
+	Title   string
+	Message string
 }
 
 func Main(args map[string]interface{}) *Response {
@@ -34,19 +52,26 @@ func Main(args map[string]interface{}) *Response {
 	if url.String() == "/" || url.String() == "/index.html" {
 		log.Infof("Non-redirectable URL >%s< served", url.String())
 
-		content, err := os.ReadFile("static/index.html")
+		data := TmplData{Title: "pxy.fi", Message: "Hello World"}
+		tmpl, err := template.New("index").Parse(tpl)
 		if err != nil {
-			log.Errorf("Unable to read static file from: >%s< - %s", "static/index.html", err)
-
 			return &Response{
 				StatusCode: http.StatusInternalServerError,
 			}
 		}
-		log.Debugf("Read the following contents from static file : >%s<", content, "static/index.html")
+
+		var b bytes.Buffer
+		err = tmpl.Execute(&b, &data)
+
+		if err != nil {
+			return &Response{
+				StatusCode: http.StatusInternalServerError,
+			}
+		}
 
 		return &Response{
 			StatusCode: http.StatusOK,
-			Body:       string(content),
+			Body:       b.String(),
 		}
 	}
 
