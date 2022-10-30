@@ -323,8 +323,7 @@ const tpl = `
 			<span class="sr-only">Close</span>
 		  </button>
 		  <i class="start-icon fa fa-info-circle faa-shake animated"></i>
-		  <strong class="font__weight-semibold">Heads up!</strong> This
-		  alert needs your attention, but it's not super important.
+		  <strong class="font__weight-semibold">Heads up!</strong> {{ .Message }}.
 		</div>
 		</div>
 		{{end}}
