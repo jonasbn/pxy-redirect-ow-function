@@ -416,6 +416,7 @@ func renderPage(message string, pagetype string) (bytes.Buffer, error) {
 
 	tmpl, err := template.New("").Parse(tpl)
 	if err != nil {
+		log.Errorf("Unable to parse HTML template: %s", err.Error())
 		return b, err
 	}
 
@@ -424,6 +425,7 @@ func renderPage(message string, pagetype string) (bytes.Buffer, error) {
 	err = tmpl.Execute(&b, &data)
 
 	if err != nil {
+		log.Errorf("Unable to render HTML page: %s", err.Error())
 		return b, err
 	}
 
