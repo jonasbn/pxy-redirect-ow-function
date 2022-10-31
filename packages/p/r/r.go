@@ -259,7 +259,7 @@ const tpl = `
       <div class="square_box box_four"></div>
       <div class="container mt-5">
         <div class="row">
-		{{if .PageType eq "error"}}
+		{{if eq .PageType "error"}}
 		<div class="col-sm-12">
 		<div
 		class="alert fade alert-simple alert-danger alert-dismissible text-left font__family-montserrat font__size-16 font__weight-light brk-library-rendered rendered show"
@@ -277,11 +277,10 @@ const tpl = `
 			<span class="sr-only">Close</span>
 		</button>
 		<i class="start-icon far fa-times-circle faa-pulse animated"></i>
-		<strong class="font__weight-semibold">Oh snap!</strong> Change a
-		few things up and try submitting again.
+		<strong class="font__weight-semibold">Oh snap!</strong> {{ .Message }}.
 		</div>
 		</div>
-		{{else if .PageType eq "warning"}}
+		{{else if eq .PageType "warning"}}
 		<div class="col-sm-12">
 		<div
 		class="alert fade alert-simple alert-warning alert-dismissible text-left font__family-montserrat font__size-16 font__weight-light brk-library-rendered rendered show"
@@ -301,8 +300,7 @@ const tpl = `
 		<i
 			class="start-icon fa fa-exclamation-triangle faa-flash animated"
 		></i>
-		<strong class="font__weight-semibold">Warning!</strong> Better
-		check yourself, you're not looking too good.
+		<strong class="font__weight-semibold">Warning!</strong> {{ .Message }}
 		</div>
 		</div>
 		{{else}}
