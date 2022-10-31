@@ -348,28 +348,31 @@ func Main(args map[string]interface{}) *Response {
 	url, err := parseRedirectURL(path)
 
 	if err != nil {
+
+		b, renderErr := renderPage(err.Error(), "error")
+
+		if renderErr != nil {
+			return &Response{
+				StatusCode: http.StatusInternalServerError,
+				Body:       renderErr.Error(),
+			}
+		}
+
 		return &Response{
 			StatusCode: http.StatusInternalServerError,
+			Body:       b.String(),
 		}
 	}
 
 	if url.String() == "/" || url.String() == "/index.html" {
 		log.Infof("Non-redirectable URL >%s< served", url.String())
 
-		data := TmplData{Message: "Hello World", PageType: "info"}
-		tmpl, err := template.New("").Parse(tpl)
-		if err != nil {
+		b, renderErr := renderPage(err.Error(), "info")
+
+		if renderErr != nil {
 			return &Response{
 				StatusCode: http.StatusInternalServerError,
-			}
-		}
-
-		var b bytes.Buffer
-		err = tmpl.Execute(&b, &data)
-
-		if err != nil {
-			return &Response{
-				StatusCode: http.StatusInternalServerError,
+				Body:       renderErr.Error(),
 			}
 		}
 
@@ -382,9 +385,19 @@ func Main(args map[string]interface{}) *Response {
 	targetURL, err := redirect(url)
 
 	if err != nil {
+
+		b, renderErr := renderPage(err.Error(), "warn")
+
+		if renderErr != nil {
+			return &Response{
+				StatusCode: http.StatusInternalServerError,
+				Body:       renderErr.Error(),
+			}
+		}
+
 		return &Response{
 			StatusCode: http.StatusBadRequest,
-			Body:       fmt.Sprintf("%s", err),
+			Body:       b.String(),
 		}
 	}
 
@@ -395,8 +408,28 @@ func Main(args map[string]interface{}) *Response {
 
 	return &Response{
 		Headers:    headers,
-		StatusCode: int(http.StatusFound),
+		StatusCode: http.StatusFound,
 	}
+}
+
+func renderPage(message string, pagetype string) (bytes.Buffer, error) {
+
+	var b bytes.Buffer
+
+	tmpl, err := template.New("").Parse(tpl)
+	if err != nil {
+		return b, err
+	}
+
+	data := TmplData{Message: message, PageType: pagetype}
+
+	err = tmpl.Execute(&b, &data)
+
+	if err != nil {
+		return b, err
+	}
+
+	return b, nil
 }
 
 func parseRedirectURL(path string) (*url.URL, error) {
