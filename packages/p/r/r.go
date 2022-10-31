@@ -460,7 +460,7 @@ func redirect(url *url.URL) (string, error) {
 
 func assembleRedirectURL(url *url.URL) (string, error) {
 
-	s := strings.Split(url.Path, "/")
+	s := strings.SplitN(url.Path, "/", 3)
 
 	log.Debugf("Parsed following parts: >%#v<", s)
 
@@ -470,11 +470,6 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 
 	if len(s) < 3 {
 		err := fmt.Errorf("insufficient parts in provided url %q", s)
-		return "", err
-	}
-
-	if len(s) > 3 {
-		err := fmt.Errorf("excessive parts in provided url %q", s)
 		return "", err
 	}
 
