@@ -460,7 +460,7 @@ func redirect(url *url.URL) (string, error) {
 
 func assembleRedirectURL(url *url.URL) (string, error) {
 
-	s := strings.SplitN(url.Path, "/")
+	s := strings.Split(url.Path, "/")
 
 	log.Debugf("Parsed following parts: >%#v<", s)
 
