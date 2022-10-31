@@ -384,7 +384,7 @@ func Main(args map[string]interface{}) *Response {
 
 	if err != nil {
 
-		b, renderErr := renderPage(err.Error(), "warn")
+		b, renderErr := renderPage(err.Error(), "warning")
 
 		if renderErr != nil {
 			return &Response{
