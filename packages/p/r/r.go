@@ -259,7 +259,7 @@ const tpl = `
       <div class="square_box box_four"></div>
       <div class="container mt-5">
         <div class="row">
-		{{if eq .PageType "error"}}
+		{{if .PageType eq "error"}}
 		<div class="col-sm-12">
 		<div
 		class="alert fade alert-simple alert-danger alert-dismissible text-left font__family-montserrat font__size-16 font__weight-light brk-library-rendered rendered show"
@@ -281,7 +281,7 @@ const tpl = `
 		few things up and try submitting again.
 		</div>
 		</div>
-		{{else if eq .PageType "warning"}}
+		{{else if .PageType eq "warning"}}
 		<div class="col-sm-12">
 		<div
 		class="alert fade alert-simple alert-warning alert-dismissible text-left font__family-montserrat font__size-16 font__weight-light brk-library-rendered rendered show"
