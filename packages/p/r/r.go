@@ -365,7 +365,7 @@ func Main(args map[string]interface{}) *Response {
 	if url.String() == "/" || url.String() == "/index.html" {
 		log.Infof("Non-redirectable URL >%s< served", url.String())
 
-		b, renderErr := renderPage(err.Error(), "info")
+		b, renderErr := renderPage("hello world", "info")
 
 		if renderErr != nil {
 			return &Response{
