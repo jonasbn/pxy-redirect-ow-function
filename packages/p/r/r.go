@@ -277,7 +277,7 @@ const tpl = `
 			<span class="sr-only">Close</span>
 		</button>
 		<i class="start-icon far fa-times-circle faa-pulse animated"></i>
-		<strong class="font__weight-semibold">Oh snap!</strong> {{ .Message }}.
+		<strong class="font__weight-semibold">Error</strong> {{ .Message }}.
 		</div>
 		</div>
 		{{else if eq .PageType "warning"}}
@@ -300,7 +300,7 @@ const tpl = `
 		<i
 			class="start-icon fa fa-exclamation-triangle faa-flash animated"
 		></i>
-		<strong class="font__weight-semibold">Warning!</strong> {{ .Message }}
+		<strong class="font__weight-semibold">Warning</strong> {{ .Message }}
 		</div>
 		</div>
 		{{else}}
@@ -321,7 +321,7 @@ const tpl = `
 			<span class="sr-only">Close</span>
 		  </button>
 		  <i class="start-icon fa fa-info-circle faa-shake animated"></i>
-		  <strong class="font__weight-semibold">Heads up!</strong> {{ .Message }}.
+		  <strong class="font__weight-semibold">Welcome</strong> {{ .Message }}.
 		</div>
 		</div>
 		{{end}}
@@ -331,6 +331,20 @@ const tpl = `
     <!-- partial -->
   </body>
 </html>`
+
+const info = `
+<p>This is <b>pxy-redirect-ow-function</b> served at:<br><br><b>pxy.fi - /ˈpɒksify/</b>
+<p>The purpose of pxy-redirect-ow-function is too offer short links for a page which broke when a set of links got too long, this is a <i>really <a href="https://dev.to/jonasbn/challenges-solutions-and-more-challenges-and-more-solutions-4j3f">long story</a></i>.</p>
+<p>For more documentation and information please see links below</p>
+<br>
+<p>The layout for this page is based on a Codepen by Swarup Kumar Kuila</p>
+
+<ul>
+<li><a href="https://github.com/jonasbn/pxy-redirect-ow-function">GitHub</a></li>
+<li><a href="https://codepen.io/uiswarup/pen/RwNraeW">Codepen</a></li>
+<li><a href="https://jonasbn.github.io/">Author</a></li>
+</ul>
+`
 
 type TmplData struct {
 	Message  string
@@ -365,7 +379,7 @@ func Main(args map[string]interface{}) *Response {
 	if url.String() == "/" || url.String() == "/index.html" {
 		log.Infof("Non-redirectable URL >%s< served", url.String())
 
-		b, renderErr := renderPage("hello world", "info")
+		b, renderErr := renderPage(info, "info")
 
 		if renderErr != nil {
 			return &Response{
