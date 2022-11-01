@@ -32,9 +32,12 @@ https://releases.llvm.org/5.0.0/tools/clang/docs/DiagnosticsReference.html#rsani
 
 Do note the version number is expanded from a single digit to a 3 part version number.
 
-This scheme is used by [clang diagnostic flags matrix generator][GENERATOR].
+This scheme is used by [clang diagnostic flags matrix generator][GENERATOR]. Please see my [blog post][BLOG] for the long version.
 
-Please see my [blog post][BLOG] for the long version.
+**pxy-redirect-ow-function** is transparent, so introduction of a version `16.0.0` would work out of the box. The pages utilizing the service and the generator however rely on human interaction in order to be updated.
+
+- [clang diagnostic flags matrix generator][GENERATOR]
+- [My TIL collection: clang diagnostic flags](http://jonasbn.github.io/til/clang/diagnostic_flags.html) (website)
 
 ## Diagnostics
 
@@ -101,7 +104,7 @@ Redirects to:
 https://releases.llvm.org/4.0.0/tools/clang/docs/DiagnosticsReference.html#wall
 ```
 
-The version number can be exchanged for a number between 4 and 15.
+The version number can be exchanged for a number between `4` and `15`.
 
 ## Resources and References
 
