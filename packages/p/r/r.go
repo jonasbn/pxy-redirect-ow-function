@@ -266,16 +266,6 @@ const tpl = `
 		role="alert"
 		data-brk-library="component__alert"
 		>
-		<button
-			type="button"
-			class="close font__size-18"
-			data-dismiss="alert"
-		>
-			<span aria-hidden="true">
-			<i class="fa fa-times danger"></i>
-			</span>
-			<span class="sr-only">Close</span>
-		</button>
 		<i class="start-icon far fa-times-circle faa-pulse animated"></i>
 		<strong class="font__weight-semibold">Error</strong> {{ .Message }}.
 		</div>
@@ -287,16 +277,6 @@ const tpl = `
 		role="alert"
 		data-brk-library="component__alert"
 		>
-		<button
-			type="button"
-			class="close font__size-18"
-			data-dismiss="alert"
-		>
-			<span aria-hidden="true">
-			<i class="fa fa-times warning"></i>
-			</span>
-			<span class="sr-only">Close</span>
-		</button>
 		<i
 			class="start-icon fa fa-exclamation-triangle faa-flash animated"
 		></i>
@@ -310,16 +290,6 @@ const tpl = `
 		  role="alert"
 		  data-brk-library="component__alert"
 		>
-		  <button
-			type="button"
-			class="close font__size-18"
-			data-dismiss="alert"
-		  >
-			<span aria-hidden="true">
-			  <i class="fa fa-times blue-cross"></i>
-			</span>
-			<span class="sr-only">Close</span>
-		  </button>
 		  <i class="start-icon fa fa-info-circle faa-shake animated"></i>
 		  <strong class="font__weight-semibold">Welcome</strong> {{ .Message }}.
 		</div>
