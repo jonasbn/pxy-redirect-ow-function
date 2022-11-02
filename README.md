@@ -92,7 +92,7 @@ The second part is the fragment.
 
 Please visit the [releases.llvm.org][LLVM] website for more details.
 
-An example of a good frament, which is available in all versions is: `wall`
+An example of a good fragment, which is available in all versions is: `wall`
 
 ```text
 https://pxy.fi/p/r/4/wall
