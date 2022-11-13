@@ -223,6 +223,11 @@ const tpl = `
         animation: blink-1 2s infinite both;
       }
 
+      .my-times {
+        -webkit-animation: blink-1 2s infinite both;
+	      animation: blink-1 2s infinite both;
+      }
+
       /**
     * ----------------------------------------
     * animation blink-1
@@ -267,7 +272,7 @@ const tpl = `
 		data-brk-library="component__alert"
 		>
 		<i class="start-icon far fa-times-circle faa-pulse animated"></i>
-		<strong class="font__weight-semibold">Error</strong> {{ .Message }}.
+		<strong class="font__weight-semibold">Error</strong> <p>{{ .Message }}</p>
 		</div>
 		</div>
 		{{else if eq .PageType "warning"}}
@@ -280,7 +285,7 @@ const tpl = `
 		<i
 			class="start-icon fa fa-exclamation-triangle faa-flash animated"
 		></i>
-		<strong class="font__weight-semibold">Warning</strong> {{ .Message }}
+		<strong class="font__weight-semibold">Warning</strong> <p>{{ .Message }}</p>
 		</div>
 		</div>
 		{{else}}
@@ -368,7 +373,7 @@ func Main(args map[string]interface{}) *Response {
 
 	if err != nil {
 
-		b, renderErr := renderPage(err.Error(), "warning")
+		b, renderErr := renderPage(err.Error(), "error")
 
 		if renderErr != nil {
 			return &Response{
@@ -435,8 +440,7 @@ func redirect(url *url.URL) (string, error) {
 	redirectURL, err := assembleRedirectURL(url)
 
 	if err != nil {
-		log.Errorf("Unable to assemble URL from: >%s< - %s", url.String(), err)
-		return "", fmt.Errorf("Unable to assemble URL from: >%s< - %s", url.String(), err)
+		return "", err
 	}
 
 	return redirectURL, nil
@@ -452,19 +456,29 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 	// 1 == version
 	// 2 == fragment
 
-	if len(s) < 3 {
-		err := fmt.Errorf("insufficient parts in provided url %q", s)
+	if len(s) != 3 {
+		log.Errorf("insufficient parts in provided url: >%s<", url.String())
+
+		// Example: https://pxy.fi/p/r/abe/wall
+		err := fmt.Errorf("insufficient parts in provided url: >%s<", url.String())
+
 		return "", err
 	}
 
 	_, err := strconv.Atoi(s[1])
 	if err != nil {
-		err := fmt.Errorf("first part of url is not a number: %q", s)
+		log.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
+
+		// https://pxy.fi/p/r/<span class="good-times">abe</span>/wall
+		err := fmt.Errorf("%s://%s/p/r/<span class=\"my-times\">%s</span>/%s", url.Scheme, url.Host, s[1], s[2])
 		return "", err
 	}
 
 	if s[2] == "" {
-		err := fmt.Errorf("second part of url is not a string: %q", s)
+		log.Errorf("second part of url: >%s< is not a string: %q", url.String(), s)
+
+		// Example: https://pxy.fi/p/r/5/<span class="good-times">X<span>
+		err := fmt.Errorf("%s://%s/p/r/%s/<span class=\"good-times\">%s<span>", url.Scheme, url.Host, s[1], "X")
 		return "", err
 	}
 
