@@ -296,7 +296,7 @@ const tpl = `
 		  data-brk-library="component__alert"
 		>
 		  <i class="start-icon fa fa-info-circle faa-shake animated"></i>
-		  <strong class="font__weight-semibold">Welcome</strong> {{ .Message }}.
+		  <strong class="font__weight-semibold">Welcome</strong> {{ .Message }}
 		</div>
 		</div>
 		{{end}}
