@@ -272,7 +272,7 @@ const tpl = `
 		data-brk-library="component__alert"
 		>
 		<i class="start-icon far fa-times-circle faa-pulse animated"></i>
-		<strong class="font__weight-semibold">Error</strong> <p>{{ .Message }}</p>
+		<strong class="font__weight-semibold">Error</strong> <p>{{ .Message | htmlescaper }}</p>
 		</div>
 		</div>
 		{{else if eq .PageType "warning"}}
@@ -285,7 +285,7 @@ const tpl = `
 		<i
 			class="start-icon fa fa-exclamation-triangle faa-flash animated"
 		></i>
-		<strong class="font__weight-semibold">Warning</strong> <p>{{ .Message }}</p>
+		<strong class="font__weight-semibold">Warning</strong> <p>{{ .Message | htmlescaper }}</p>
 		</div>
 		</div>
 		{{else}}
@@ -296,7 +296,7 @@ const tpl = `
 		  data-brk-library="component__alert"
 		>
 		  <i class="start-icon fa fa-info-circle faa-shake animated"></i>
-		  <strong class="font__weight-semibold">Welcome</strong> {{ .Message }}.
+		  <strong class="font__weight-semibold">Welcome</strong> {{ .Message | htmlescaper }}.
 		</div>
 		</div>
 		{{end}}
