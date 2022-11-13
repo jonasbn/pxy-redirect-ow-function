@@ -487,7 +487,7 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 		// Example:
 		// https://pxy.fi/p/r/5/
 		// Example: https://pxy.fi/p/r/5/<span class="good-times">X<span>
-		err := fmt.Errorf("%s://%s/p/r/%s/<span class=\"my-times\">%s<span>", url.Scheme, url.Host, s[1], "X")
+		err := fmt.Errorf("%s://%s/p/r/%s/<span class=\"my-times\">%s<span>", url.Scheme, url.Host, s[1], "x")
 		return "", err
 	}
 
