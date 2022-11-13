@@ -462,8 +462,10 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 	if len(s) < 3 {
 		log.Errorf("insufficient parts in provided url: >%s<", url.String())
 
-		// Example: https://pxy.fi/p/r/abe/wall
-		err := fmt.Errorf("insufficient parts in provided url: >%s<", url.String())
+		// Example:
+		// https://pxy.fi/p/r/5
+		// https://pxy.fi/p/r/5/<span class="good-times">X<span>
+		err := fmt.Errorf("%s://%s/p/r/<span class=\"my-times\">%s<span>", url.Scheme, url.Host, s[1])
 
 		return "", err
 	}
@@ -472,7 +474,9 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 	if err != nil {
 		log.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
 
-		// https://pxy.fi/p/r/<span class="good-times">abe</span>/wall
+		// Example:
+		// https://pxy.fi/p/r/a
+		// https://pxy.fi/p/r/<span class="good-times">a</span>/wall
 		err := fmt.Errorf("%s://%s/p/r/<span class=\"my-times\">%s</span>/%s", url.Scheme, url.Host, s[1], s[2])
 		return "", err
 	}
@@ -480,6 +484,8 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 	if s[2] == "" {
 		log.Errorf("second part of url: >%s< is not a string: %q", url.String(), s)
 
+		// Example:
+		// https://pxy.fi/p/r/5/
 		// Example: https://pxy.fi/p/r/5/<span class="good-times">X<span>
 		err := fmt.Errorf("%s://%s/p/r/%s/<span class=\"my-times\">%s<span>", url.Scheme, url.Host, s[1], "X")
 		return "", err
