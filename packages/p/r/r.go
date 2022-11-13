@@ -272,7 +272,7 @@ const tpl = `
 		data-brk-library="component__alert"
 		>
 		<i class="start-icon far fa-times-circle faa-pulse animated"></i>
-		<strong class="font__weight-semibold">Error</strong> <p>{{ .Message | noescape }}</p>
+		<strong class="font__weight-semibold">Error</strong> <p>{{ .Message }}</p>
 		</div>
 		</div>
 		{{else if eq .PageType "warning"}}
@@ -285,7 +285,7 @@ const tpl = `
 		<i
 			class="start-icon fa fa-exclamation-triangle faa-flash animated"
 		></i>
-		<strong class="font__weight-semibold">Warning</strong> <p>{{ .Message | noescape }}</p>
+		<strong class="font__weight-semibold">Warning</strong> <p>{{ .Message }}</p>
 		</div>
 		</div>
 		{{else}}
@@ -296,7 +296,7 @@ const tpl = `
 		  data-brk-library="component__alert"
 		>
 		  <i class="start-icon fa fa-info-circle faa-shake animated"></i>
-		  <strong class="font__weight-semibold">Welcome</strong> {{ .Message | noescape }}.
+		  <strong class="font__weight-semibold">Welcome</strong> {{ .Message }}.
 		</div>
 		</div>
 		{{end}}
@@ -322,7 +322,7 @@ const info = `
 `
 
 type TmplData struct {
-	Message  string
+	Message  template.HTML
 	PageType string
 }
 
@@ -409,7 +409,7 @@ func renderPage(message string, pagetype string) (bytes.Buffer, error) {
 		return b, err
 	}
 
-	data := TmplData{Message: message, PageType: pagetype}
+	data := TmplData{Message: template.HTML(message), PageType: pagetype}
 
 	err = tmpl.Execute(&b, &data)
 
