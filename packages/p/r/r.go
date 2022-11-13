@@ -491,7 +491,7 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 		// Example:
 		// https://pxy.fi/p/r/5/
 		// Example: https://pxy.fi/p/r/5/<span class="good-times">X<span>
-		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a part to indicatede the fragment as the second part to redirect to the documentation</p>%s://%s/p/r/%s/<span class=\"my-times\">%s<span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: https://pxy.fi/p/r/13/wall</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], "x")
+		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a part to indicatede the fragment as the second part to redirect to the documentation</p>%s://%s/p/r/%s/<span class=\"my-times\">%s</span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: https://pxy.fi/p/r/13/wall</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], "x")
 		return "", err
 	}
 
