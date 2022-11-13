@@ -456,6 +456,9 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 	// 1 == version
 	// 2 == fragment
 
+	url.Host = "pxy.fi"
+	url.Scheme = "https"
+
 	if len(s) != 3 {
 		log.Errorf("insufficient parts in provided url: >%s<", url.String())
 
