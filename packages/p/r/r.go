@@ -465,7 +465,7 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 		// Example:
 		// https://pxy.fi/p/r/5
 		// https://pxy.fi/p/r/5/<span class="good-times">X<span>
-		err := fmt.Errorf("%s://%s/p/r/<span class=\"my-times\">%s<span>", url.Scheme, url.Host, s[1])
+		err := fmt.Errorf("<p>Specified URL has insufficient parts to redirect to the documentation</p><p>%s://%s/p/r/<span class=\"my-times\">%s<span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1])
 
 		return "", err
 	}
@@ -477,7 +477,7 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 		// Example:
 		// https://pxy.fi/p/r/a
 		// https://pxy.fi/p/r/<span class="good-times">a</span>/wall
-		err := fmt.Errorf("%s://%s/p/r/<span class=\"my-times\">%s</span>/%s", url.Scheme, url.Host, s[1], s[2])
+		err := fmt.Errorf("<p>Specified URL requires a version number as the first part to redirect to the documentation</p><p>%s://%s/p/r/<span class=\"my-times\">%s</span>/%s</p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], s[2])
 		return "", err
 	}
 
@@ -487,7 +487,7 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 		// Example:
 		// https://pxy.fi/p/r/5/
 		// Example: https://pxy.fi/p/r/5/<span class="good-times">X<span>
-		err := fmt.Errorf("%s://%s/p/r/%s/<span class=\"my-times\">%s<span>", url.Scheme, url.Host, s[1], "x")
+		err := fmt.Errorf("<p>Specified URL requires a part to indicatede the fragment as the second part to redirect to the documentation</p>%s://%s/p/r/%s/<span class=\"my-times\">%s<span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], "x")
 		return "", err
 	}
 
