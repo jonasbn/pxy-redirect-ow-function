@@ -336,7 +336,13 @@ func Main(args map[string]interface{}) *Response {
 
 	path := args["__ow_path"].(string)
 
-	url, err := parseRedirectURL(path)
+	requestHeaders := args["__ow_headers"]
+	val, _ := requestHeaders.(map[string]interface{})
+
+	userAgent := val["user-agent"].(string)
+	ip := val["do-connecting-ip"].(string)
+
+	url, err := parseRedirectURL(path, ip, userAgent)
 
 	if err != nil {
 
@@ -425,8 +431,8 @@ func renderPage(message string, pagetype string) (bytes.Buffer, error) {
 	return b, nil
 }
 
-func parseRedirectURL(path string) (*url.URL, error) {
-	log.Infof("Received URL: >%s<", path)
+func parseRedirectURL(path, ip, userAgent string) (*url.URL, error) {
+	log.Infof("Received URL: >%s< from IP: >%s< using user-agent: >%s<", path, ip, userAgent)
 
 	redirectURL, parseErr := url.Parse(path)
 	if parseErr != nil {
@@ -468,7 +474,6 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 
 		// Example:
 		// https://pxy.fi/p/r/5
-		// https://pxy.fi/p/r/5/<span class="good-times">X<span>
 		err := fmt.Errorf("<p>You only made it this far, because the specified URL has insufficient parts to redirect to the documentation</p><p>%s://%s/p/r/<span class=\"my-times\">%s<span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: https://pxy.fi/p/r/13/wall</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1])
 
 		return "", err
@@ -479,8 +484,7 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 		log.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
 
 		// Example:
-		// https://pxy.fi/p/r/a
-		// https://pxy.fi/p/r/<span class="good-times">a</span>/wall
+		// https://pxy.fi/p/r/X
 		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a version number as the first part to redirect to the documentation</p><p>%s://%s/p/r/<span class=\"my-times\">%s</span>/%s</p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: https://pxy.fi/p/r/13/wall</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], s[2])
 		return "", err
 	}
@@ -489,8 +493,7 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 		log.Errorf("second part of url: >%s< is not a string: %q", url.String(), s)
 
 		// Example:
-		// https://pxy.fi/p/r/5/
-		// Example: https://pxy.fi/p/r/5/<span class="good-times">X<span>
+		// Example: https://pxy.fi/p/r/0
 		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a part to indicatede the fragment as the second part to redirect to the documentation</p>%s://%s/p/r/%s/<span class=\"my-times\">%s</span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: https://pxy.fi/p/r/13/wall</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], "x")
 		return "", err
 	}
