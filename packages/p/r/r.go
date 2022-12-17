@@ -432,7 +432,11 @@ func renderPage(message string, pagetype string) (bytes.Buffer, error) {
 }
 
 func parseRedirectURL(path, ip, userAgent string) (*url.URL, error) {
-	log.Infof("Received URL: >%s< from IP: >%s< using user-agent: >%s<", path, ip, userAgent)
+
+	log.WithFields(log.Fields{
+		"ip":         ip,
+		"user-agent": userAgent,
+	}).Info("Received URL: >" + path + "<")
 
 	redirectURL, parseErr := url.Parse(path)
 	if parseErr != nil {
