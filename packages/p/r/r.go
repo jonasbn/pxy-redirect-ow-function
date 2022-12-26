@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
@@ -332,7 +333,11 @@ type TmplData struct {
 
 func Main(args map[string]interface{}) *Response {
 
-	log.SetLevel(log.DebugLevel)
+	log.SetLevel(log.InfoLevel)
+
+	if os.Getenv("LOGLEVEL") == "debug" {
+		log.SetLevel(log.DebugLevel)
+	}
 
 	path := args["__ow_path"].(string)
 
