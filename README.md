@@ -106,6 +106,18 @@ https://releases.llvm.org/4.0.0/tools/clang/docs/DiagnosticsReference.html#wall
 
 The version number can be exchanged for a number between `4` and `15`.
 
+## Logging
+
+The default log level is `INFO`
+
+It can be set to `DEBUG` via an environment variable, see below.
+
+See the article on [log levels][LOGLEVELS] for more information.
+
+## Environment Variables
+
+If the environment variable `LOGLEVEL` is specified as `debug` the log level will be set to `DEBUG`.
+
 ## Resources and References
 
 - [DigitalOcean][DO]
@@ -115,6 +127,7 @@ The version number can be exchanged for a number between `4` and `15`.
 - [pxy-redirect][SERVICE] service
 - [pxy.fi][PXYFI] site
 - [llvm releases documentation site][LLVM]
+- [Log Levels][LOGLEVELS]
 
 [GENERATOR]: https://github.com/jonasbn/clang-diagnostic-flags-matrix
 [SERVICE]: https://github.com/jonasbn/pxy-redirect
@@ -122,3 +135,4 @@ The version number can be exchanged for a number between `4` and `15`.
 [DO]: https://www.digitalocean.com/
 [PXYFI]: https://pxy.fi/p/r/
 [LLVM]: https://releases.llvm.org/
+[LOGLEVELS]: https://betterstack.com/community/guides/logging/log-levels-explained/
