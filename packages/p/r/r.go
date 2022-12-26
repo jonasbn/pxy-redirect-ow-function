@@ -346,6 +346,7 @@ func Main(args map[string]interface{}) *Response {
 
 	userAgent := val["user-agent"].(string)
 	ip := val["do-connecting-ip"].(string)
+	referer := val["referer"].(string)
 
 	url, err := parseRedirectURL(path, ip, userAgent)
 
@@ -436,12 +437,13 @@ func renderPage(message string, pagetype string) (bytes.Buffer, error) {
 	return b, nil
 }
 
-func parseRedirectURL(path, ip, userAgent string) (*url.URL, error) {
+func parseRedirectURL(path, ip, userAgent, referer string) (*url.URL, error) {
 
 	log.WithFields(log.Fields{
 		"ip":         ip,
 		"user-agent": userAgent,
-	}).Info("Received URL: >" + path + "<")
+		"referer":    referer,
+	}).Info("Received URL: >" + path + "< via >" + referer)
 
 	redirectURL, parseErr := url.Parse(path)
 	if parseErr != nil {
