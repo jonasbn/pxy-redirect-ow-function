@@ -348,7 +348,7 @@ func Main(args map[string]interface{}) *Response {
 	ip := val["do-connecting-ip"].(string)
 	referer := val["referer"].(string)
 
-	url, err := parseRedirectURL(path, ip, userAgent)
+	url, err := parseRedirectURL(path, ip, userAgent, referer)
 
 	if err != nil {
 
