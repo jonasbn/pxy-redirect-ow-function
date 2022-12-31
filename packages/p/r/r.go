@@ -335,8 +335,10 @@ func Main(args map[string]interface{}) *Response {
 
 	log.SetLevel(log.InfoLevel)
 
-	if os.Getenv("LOGLEVEL") == "debug" {
-		log.SetLevel(log.DebugLevel)
+	if os.Getenv("LOGLEVEL") != "" {
+		if os.Getenv("LOGLEVEL") == "debug" {
+			log.SetLevel(log.DebugLevel)
+		}
 	}
 
 	path := args["__ow_path"].(string)
