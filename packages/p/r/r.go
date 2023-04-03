@@ -341,14 +341,29 @@ func Main(args map[string]interface{}) *Response {
 		}
 	}
 
-	path := args["__ow_path"].(string)
+	userAgent := ""
+	ip := ""
+	referer := ""
+	path := ""
+
+	if args["__ow_path"].(string) != "" {
+		path = args["__ow_path"].(string)
+	}
 
 	requestHeaders := args["__ow_headers"]
 	val, _ := requestHeaders.(map[string]interface{})
 
-	userAgent := val["user-agent"].(string)
-	ip := val["do-connecting-ip"].(string)
-	referer := val["referer"].(string)
+	if val["user-agent"].(string) != "" {
+		userAgent = val["user-agent"].(string)
+	}
+
+	if val["do-connecting-ip"].(string) != "" {
+		ip = val["do-connecting-ip"].(string)
+	}
+
+	if val["referer"].(string) != "" {
+		referer = val["referer"].(string)
+	}
 
 	url, err := parseRedirectURL(path, ip, userAgent, referer)
 
@@ -413,7 +428,7 @@ func Main(args map[string]interface{}) *Response {
 
 	return &Response{
 		Headers:    headers,
-		StatusCode: http.StatusFound,
+		StatusCode: http.StatusTemporaryRedirect,
 	}
 }
 
