@@ -51,6 +51,8 @@ func Main(args map[string]interface{}) *Response {
 		referer = val["referer"].(string)
 	}
 
+	log.Infof("Received request to redirect: >%s<", path)
+
 	url, err := parseRedirectURL(path, ip, userAgent, referer)
 
 	if err != nil {
