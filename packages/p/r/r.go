@@ -62,7 +62,7 @@ func Main(args map[string]interface{}) *Response {
 		}
 	}
 
-	targetURL, err := redirect(url)
+	targetURL, err := assembleTargetURL(url)
 
 	if err != nil {
 		return &Response{
@@ -102,6 +102,7 @@ func parseRedirectURL(path, ip, userAgent, referer string) (*url.URL, error) {
 	return redirectURL, nil
 }
 
+/*
 func redirect(url *url.URL) (string, error) {
 
 	redirectURL, err := assembleRedirectURL(url)
@@ -112,8 +113,9 @@ func redirect(url *url.URL) (string, error) {
 
 	return redirectURL, nil
 }
+*/
 
-func assembleRedirectURL(url *url.URL) (string, error) {
+func assembleTargetURL(url *url.URL) (string, error) {
 
 	s := strings.SplitN(url.Path, "/", 3)
 
