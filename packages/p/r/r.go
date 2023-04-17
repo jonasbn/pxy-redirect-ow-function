@@ -91,6 +91,7 @@ func parseRedirectURL(path, ip, userAgent, referer string) (*url.URL, error) {
 	}).Info("Received URL: >" + path + "< via >" + referer)
 
 	redirectURL, parseErr := url.Parse(path)
+
 	if parseErr != nil {
 		log.Errorf("Unable to parse received URL: >%s<", path)
 		return nil, fmt.Errorf("Unable to parse received URL: >%s<", path)
@@ -149,7 +150,7 @@ func assembleRedirectURL(url *url.URL) (string, error) {
 		log.Errorf("second part of url: >%s< is not a string: %q", url.String(), s)
 
 		// Example:
-		// Example: https://pxy.fi/p/r/0
+		// https://pxy.fi/p/r/0
 		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a part to indicatede the fragment as the second part to redirect to the documentation</p>%s://%s/p/r/%s/<span class=\"my-times\">%s</span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: https://pxy.fi/p/r/13/wall</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], "x")
 		return "", err
 	}
