@@ -102,19 +102,6 @@ func parseRedirectURL(path, ip, userAgent, referer string) (*url.URL, error) {
 	return redirectURL, nil
 }
 
-/*
-func redirect(url *url.URL) (string, error) {
-
-	redirectURL, err := assembleRedirectURL(url)
-
-	if err != nil {
-		return "", err
-	}
-
-	return redirectURL, nil
-}
-*/
-
 func assembleTargetURL(url *url.URL) (string, error) {
 
 	s := strings.SplitN(url.Path, "/", 3)
