@@ -78,7 +78,7 @@ func Main(args map[string]interface{}) *Response {
 
 	return &Response{
 		Headers:    headers,
-		StatusCode: http.StatusTemporaryRedirect, // 307
+		StatusCode: http.StatusPermanentRedirect, // 308
 	}
 }
 
