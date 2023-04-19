@@ -22,7 +22,7 @@ func Main(args map[string]interface{}) *Response {
 	log.SetLevel(log.InfoLevel)
 
 	if os.Getenv("LOGLEVEL") != "" {
-		if os.Getenv("LOGLEVEL") == "DEBUG" {
+		if os.Getenv("LOGLEVEL") == "debug" {
 			log.SetLevel(log.DebugLevel)
 		}
 	}
