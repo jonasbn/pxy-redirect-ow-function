@@ -1,6 +1,7 @@
 parameters: {}
 environment: {
-  LOG_DESTINATIONS: '${LOG_DESTINATIONS}'
+  LOG_DESTINATIONS: '${LOG_DESTINATIONS}',
+  LOG_LEVEL: '${LOG_LEVEL}'
 }
 packages:
   - name: p
