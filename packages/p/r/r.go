@@ -17,6 +17,17 @@ type Response struct {
 	Body       string            `json:"body,omitempty"`
 }
 
+func init() {
+	log.SetLevel(log.InfoLevel)
+
+	if os.Getenv("LOG_LEVEL") != "" {
+		if os.Getenv("LOG_LEVEL") == "debug" {
+			log.SetLevel(log.DebugLevel)
+
+		}
+	}
+}
+
 func Main(args map[string]interface{}) *Response {
 
 	log.SetLevel(log.InfoLevel)
