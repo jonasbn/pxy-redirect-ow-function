@@ -53,6 +53,8 @@ func Main(args map[string]interface{}) *Response {
 
 	log.Infof("Received request to redirect: >%s<", path)
 
+	emitHeartbeat()
+
 	url, err := parseRedirectURL(path, ip, userAgent, referer)
 
 	if err != nil {
@@ -145,4 +147,22 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	}
 
 	return fmt.Sprintf("https://releases.llvm.org/%s.0.0/tools/clang/docs/DiagnosticsReference.html#%s", s[1], s[2]), nil
+}
+
+func emitHeartbeat() {
+	log.Debug("Emitting heartbeat")
+
+	heartbeatToken := os.Getenv("HEARTBEAT_TOKEN")
+
+	url := fmt.Sprintf("https://betteruptime.com/api/v1/heartbeat/%s", heartbeatToken)
+
+	resp, err := http.Get(url)
+
+	if err != nil {
+		log.Errorf("Unable to emit heartbeat: %s", err)
+	}
+
+	if resp.StatusCode != 200 {
+		log.Errorf("Emitted heartbeat failed: %s", resp.Status)
+	}
 }
