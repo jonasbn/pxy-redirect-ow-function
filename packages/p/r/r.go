@@ -23,21 +23,11 @@ func init() {
 	if os.Getenv("LOG_LEVEL") != "" {
 		if os.Getenv("LOG_LEVEL") == "debug" {
 			log.SetLevel(log.DebugLevel)
-
 		}
 	}
 }
 
 func Main(args map[string]interface{}) *Response {
-
-	log.SetLevel(log.InfoLevel)
-
-	if os.Getenv("LOG_LEVEL") != "" {
-		if os.Getenv("LOG_LEVEL") == "debug" {
-			log.SetLevel(log.DebugLevel)
-
-		}
-	}
 
 	userAgent := ""
 	ip := ""
@@ -67,7 +57,7 @@ func Main(args map[string]interface{}) *Response {
 		"ip":         ip,
 		"user-agent": userAgent,
 		"referer":    referer,
-	}).Info("Running with log level: %s", log.GetLevel())
+	}).Infof("Running with log level: %s", log.GetLevel())
 
 	log.Infof("Received request to redirect: >%s<", path)
 
