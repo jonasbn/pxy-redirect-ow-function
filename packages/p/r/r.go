@@ -24,8 +24,10 @@ func Main(args map[string]interface{}) *Response {
 	if os.Getenv("LOG_LEVEL") != "" {
 		if os.Getenv("LOG_LEVEL") == "debug" {
 			log.SetLevel(log.DebugLevel)
+
 		}
 	}
+	log.Info("Running with log level: %s", log.GetLevel())
 
 	userAgent := ""
 	ip := ""
