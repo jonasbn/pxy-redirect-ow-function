@@ -1,7 +1,7 @@
 parameters: {}
 environment: {
   LOG_DESTINATIONS: '${LOG_DESTINATIONS}',
-  LOGLEVEL: '${LOGLEVEL}',
+  LOG_LEVEL: '${LOG_LEVEL}',
   HEARTBEAT_TOKEN: '${HEARTBEAT_TOKEN}'
 }
 packages:
