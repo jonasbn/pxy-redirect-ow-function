@@ -27,7 +27,6 @@ func Main(args map[string]interface{}) *Response {
 
 		}
 	}
-	log.Info("Running with log level: %s", log.GetLevel())
 
 	userAgent := ""
 	ip := ""
@@ -52,6 +51,12 @@ func Main(args map[string]interface{}) *Response {
 	if val["referer"].(string) != "" {
 		referer = val["referer"].(string)
 	}
+
+	log.WithFields(log.Fields{
+		"ip":         ip,
+		"user-agent": userAgent,
+		"referer":    referer,
+	}).Info("Running with log level: %s", log.GetLevel())
 
 	log.Infof("Received request to redirect: >%s<", path)
 
