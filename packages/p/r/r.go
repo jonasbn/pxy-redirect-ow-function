@@ -158,7 +158,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 }
 
 func emitHeartbeat() {
-	log.Debug("Emitting heartbeat")
+	log.Info("Emitting heartbeat")
 
 	heartbeatToken := os.Getenv("HEARTBEAT_TOKEN")
 
@@ -169,6 +169,7 @@ func emitHeartbeat() {
 	if err != nil {
 		log.Errorf("Unable to emit heartbeat: %s", err)
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		log.Errorf("Emitted heartbeat failed: %s", resp.Status)
