@@ -18,14 +18,30 @@ type Response struct {
 }
 
 func init() {
-	log.SetLevel(log.InfoLevel)
-
 	if os.Getenv("LOG_LEVEL") != "" {
 		if os.Getenv("LOG_LEVEL") == "debug" {
 			log.SetLevel(log.DebugLevel)
 		}
 	}
 }
+
+/*
+func main() {
+	args := make(map[string]interface{})
+	headers := make(map[string]interface{})
+
+	headers["user-agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko)"
+	headers["do-connecting-ip"] = "192.168.1.2"
+	headers["referer"] = "https://pxy.fi/p/r/4/wall"
+
+	args["__ow_path"] = "/4/wall"
+	args["__ow_headers"] = headers
+
+	resp := Main(args)
+
+	fmt.Printf("Response: %#v\n", *resp)
+}
+*/
 
 func Main(args map[string]interface{}) *Response {
 
@@ -158,7 +174,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 }
 
 func emitHeartbeat() {
-	log.Info("Emitting heartbeat")
+	log.Debug("Emitting heartbeat")
 
 	heartbeatToken := os.Getenv("HEARTBEAT_TOKEN")
 
@@ -169,9 +185,9 @@ func emitHeartbeat() {
 	if err != nil {
 		log.Errorf("Unable to emit heartbeat: %s", err)
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		log.Errorf("Emitted heartbeat failed: %s", resp.Status)
 	}
+	defer resp.Body.Close()
 }
