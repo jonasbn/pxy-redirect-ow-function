@@ -11,35 +11,36 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type ResponseHeaders struct {
+	Location string `json:"location,omitempty"`
+}
+
 type Response struct {
-	StatusCode int               `json:"statusCode,omitempty"`
-	Headers    map[string]string `json:"headers,omitempty"`
-	Body       string            `json:"body,omitempty"`
+	StatusCode int             `json:"statusCode,omitempty"`
+	Headers    ResponseHeaders `json:"headers,omitempty"`
+	Body       string          `json:"body,omitempty"`
 }
 
 var logger = logrus.New()
 
-/*
-func main() {
+/* func main() {
 	args := make(map[string]interface{})
 	headers := make(map[string]interface{})
 
 	headers["user-agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko)"
 	headers["do-connecting-ip"] = "192.168.1.2"
 	headers["referer"] = "https://pxy.fi/p/r/4/wall"
+	headers["x-request-id"] = "4d84db433a35256e7fdd395f430a9121"
 
 	args["__ow_path"] = "/4/wall"
 	args["__ow_headers"] = headers
 
 	resp := Main(args)
 
-	fmt.Printf("Response: %#v\n", *resp)
-}
-*/
+	fmt.Printf("Response: %#v\n", resp)
+} */
 
-func Main(args map[string]interface{}) *Response {
-
-	logger.SetLevel(logrus.DebugLevel)
+func Main(args map[string]interface{}) Response {
 
 	if os.Getenv("LOG_LEVEL") != "" {
 		if os.Getenv("LOG_LEVEL") == "debug" {
@@ -47,35 +48,35 @@ func Main(args map[string]interface{}) *Response {
 		}
 	}
 
-	fmt.Printf("Our log level: %s\n", logger.GetLevel())
-
 	userAgent := ""
 	ip := ""
 	referer := ""
 	path := ""
 	requestID := ""
 
-	if args["__ow_path"].(string) != "" {
+	if args["__ow_path"] != nil {
 		path = args["__ow_path"].(string)
 	}
 
-	requestHeaders := args["__ow_headers"]
-	val, _ := requestHeaders.(map[string]interface{})
+	if args["__ow_headers"] != nil {
+		requestHeaders := args["__ow_headers"]
+		val, _ := requestHeaders.(map[string]interface{})
 
-	if val["user-agent"].(string) != "" {
-		userAgent = val["user-agent"].(string)
-	}
+		if val["user-agent"] != nil {
+			userAgent = val["user-agent"].(string)
+		}
 
-	if val["do-connecting-ip"].(string) != "" {
-		ip = val["do-connecting-ip"].(string)
-	}
+		if val["do-connecting-ip"] != nil {
+			ip = val["do-connecting-ip"].(string)
+		}
 
-	if val["referer"].(string) != "" {
-		referer = val["referer"].(string)
-	}
+		if val["referer"] != nil {
+			referer = val["referer"].(string)
+		}
 
-	if val["x-request-id"].(string) != "" {
-		requestID = val["x-request-id"].(string)
+		if val["x-request-id"] != nil {
+			requestID = val["x-request-id"].(string)
+		}
 	}
 
 	logger.WithFields(logrus.Fields{
@@ -83,7 +84,7 @@ func Main(args map[string]interface{}) *Response {
 		"user-agent": userAgent,
 		"referer":    referer,
 		"request-id": requestID,
-	}).Infof("Running with log level: %s", logger.GetLevel())
+	}).Debugf("Running with log level: %s", logger.GetLevel())
 
 	logger.WithFields(logrus.Fields{
 		"ip":         ip,
@@ -97,7 +98,7 @@ func Main(args map[string]interface{}) *Response {
 	url, err := parseRedirectURL(path)
 
 	if err != nil {
-		return &Response{
+		return Response{
 			StatusCode: http.StatusInternalServerError, // 500
 			Body:       err.Error(),
 		}
@@ -106,20 +107,23 @@ func Main(args map[string]interface{}) *Response {
 	targetURL, err := assembleTargetURL(url)
 
 	if err != nil {
-		return &Response{
+		return Response{
 			StatusCode: http.StatusBadRequest, // 400
 			Body:       err.Error(),
 		}
 	}
 
-	headers := make(map[string]string)
-	headers["location"] = targetURL
+	logger.WithFields(logrus.Fields{
+		"ip":         ip,
+		"user-agent": userAgent,
+		"referer":    referer,
+		"request-id": requestID,
+	}).Infof("Redirecting to: >%s<", targetURL)
 
-	logger.Infof("Redirecting to: >%s<", targetURL)
-
-	return &Response{
-		Headers:    headers,
+	return Response{
+		Headers:    ResponseHeaders{Location: targetURL},
 		StatusCode: http.StatusPermanentRedirect, // 308
+		Body:       "redirecting...",
 	}
 }
 
