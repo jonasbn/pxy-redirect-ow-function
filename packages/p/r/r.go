@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 type Response struct {
@@ -17,13 +17,7 @@ type Response struct {
 	Body       string            `json:"body,omitempty"`
 }
 
-func init() {
-	if os.Getenv("LOG_LEVEL") != "" {
-		if os.Getenv("LOG_LEVEL") == "debug" {
-			log.SetLevel(log.DebugLevel)
-		}
-	}
-}
+var log = logrus.New()
 
 /*
 func main() {
@@ -44,6 +38,12 @@ func main() {
 */
 
 func Main(args map[string]interface{}) *Response {
+
+	if os.Getenv("LOG_LEVEL") != "" {
+		if os.Getenv("LOG_LEVEL") == "debug" {
+			log.SetLevel(logrus.DebugLevel)
+		}
+	}
 
 	userAgent := ""
 	ip := ""
@@ -69,7 +69,7 @@ func Main(args map[string]interface{}) *Response {
 		referer = val["referer"].(string)
 	}
 
-	log.WithFields(log.Fields{
+	log.WithFields(logrus.Fields{
 		"ip":         ip,
 		"user-agent": userAgent,
 		"referer":    referer,
@@ -110,7 +110,7 @@ func Main(args map[string]interface{}) *Response {
 
 func parseRedirectURL(path, ip, userAgent, referer string) (*url.URL, error) {
 
-	log.WithFields(log.Fields{
+	log.WithFields(logrus.Fields{
 		"ip":         ip,
 		"user-agent": userAgent,
 		"referer":    referer,
