@@ -47,6 +47,8 @@ func Main(args map[string]interface{}) *Response {
 		}
 	}
 
+	fmt.Printf("Our log level: %s\n", logger.GetLevel())
+
 	userAgent := ""
 	ip := ""
 	referer := ""
