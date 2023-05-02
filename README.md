@@ -114,6 +114,20 @@ It can be set to `DEBUG` via an environment variable, see below.
 
 See the article on [log levels][LOGLEVELS] for more information.
 
+The logging is currently collected on [logtail](https://betterstack.com/logtail), from [Better Stack](https://betterstack.com/).
+
+## Monitoring
+
+Currently the service is monitored using [Better Uptime](https://betteruptime.com/) from [Better Stack](https://betterstack.com/).
+
+A public status page is [available](https://status.pxy.fi/).
+
+It monitors the following:
+
+- The reverse proxy (Nginx) via a health check
+- Calling a redirectable URL and checking the response code. The URL goes via the reverse proxy (Nginx) and the service (OpenWhisk)
+- The service (OpenWhisk) via a heartbeat
+
 ## Environment Variables
 
 If the environment variable `LOG_LEVEL` is specified as `debug` the log level will be set to `DEBUG`.
