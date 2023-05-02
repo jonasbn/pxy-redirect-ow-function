@@ -39,6 +39,8 @@ func main() {
 
 func Main(args map[string]interface{}) *Response {
 
+	logger.SetLevel(logrus.DebugLevel)
+
 	if os.Getenv("LOG_LEVEL") != "" {
 		if os.Getenv("LOG_LEVEL") == "debug" {
 			logger.SetLevel(logrus.DebugLevel)
@@ -114,7 +116,7 @@ func parseRedirectURL(path, ip, userAgent, referer string) (*url.URL, error) {
 		"ip":         ip,
 		"user-agent": userAgent,
 		"referer":    referer,
-	}).Info("Received URL: >" + path + "< via >" + referer)
+	}).Infof("Received URL: >%s< via >%s<", path, referer)
 
 	redirectURL, parseErr := url.Parse(path)
 
