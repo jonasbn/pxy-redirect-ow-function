@@ -5,11 +5,11 @@ environment: {
   HEARTBEAT_TOKEN: '${HEARTBEAT_TOKEN}'
 }
 packages:
-  - name: p
+  - name: pxy
     environment: {}
     parameters: {}
     actions:
-      - name: r
+      - name: redirect
         main: ''
         runtime: 'go:1.20'
         environment: {}
