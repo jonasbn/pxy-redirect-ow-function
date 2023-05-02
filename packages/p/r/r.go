@@ -53,7 +53,7 @@ func Main(args map[string]interface{}) *Response {
 	ip := ""
 	referer := ""
 	path := ""
-	requestId := ""
+	requestID := ""
 
 	if args["__ow_path"].(string) != "" {
 		path = args["__ow_path"].(string)
@@ -75,26 +75,26 @@ func Main(args map[string]interface{}) *Response {
 	}
 
 	if val["x-request-id"].(string) != "" {
-		requestId = val["x-request-id"].(string)
+		requestID = val["x-request-id"].(string)
 	}
 
 	logger.WithFields(logrus.Fields{
 		"ip":         ip,
 		"user-agent": userAgent,
 		"referer":    referer,
-		"request-id": requestId,
+		"request-id": requestID,
 	}).Infof("Running with log level: %s", logger.GetLevel())
 
 	logger.WithFields(logrus.Fields{
 		"ip":         ip,
 		"user-agent": userAgent,
 		"referer":    referer,
-		"request-id": requestId,
+		"request-id": requestID,
 	}).Infof("Received URL: >%s< via >%s<", path, referer)
 
 	emitHeartbeat()
 
-	url, err := parseRedirectURL(path, ip, userAgent, referer)
+	url, err := parseRedirectURL(path)
 
 	if err != nil {
 		return &Response{
