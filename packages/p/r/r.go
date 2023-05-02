@@ -53,6 +53,7 @@ func Main(args map[string]interface{}) *Response {
 	ip := ""
 	referer := ""
 	path := ""
+	requestId := ""
 
 	if args["__ow_path"].(string) != "" {
 		path = args["__ow_path"].(string)
@@ -73,13 +74,23 @@ func Main(args map[string]interface{}) *Response {
 		referer = val["referer"].(string)
 	}
 
+	if val["x-request-id"].(string) != "" {
+		requestId = val["x-request-id"].(string)
+	}
+
 	logger.WithFields(logrus.Fields{
 		"ip":         ip,
 		"user-agent": userAgent,
 		"referer":    referer,
+		"request-id": requestId,
 	}).Infof("Running with log level: %s", logger.GetLevel())
 
-	logger.Infof("Received request to redirect: >%s<", path)
+	logger.WithFields(logrus.Fields{
+		"ip":         ip,
+		"user-agent": userAgent,
+		"referer":    referer,
+		"request-id": requestId,
+	}).Infof("Received URL: >%s< via >%s<", path, referer)
 
 	emitHeartbeat()
 
@@ -112,13 +123,7 @@ func Main(args map[string]interface{}) *Response {
 	}
 }
 
-func parseRedirectURL(path, ip, userAgent, referer string) (*url.URL, error) {
-
-	logger.WithFields(logrus.Fields{
-		"ip":         ip,
-		"user-agent": userAgent,
-		"referer":    referer,
-	}).Infof("Received URL: >%s< via >%s<", path, referer)
+func parseRedirectURL(path string) (*url.URL, error) {
 
 	redirectURL, parseErr := url.Parse(path)
 
