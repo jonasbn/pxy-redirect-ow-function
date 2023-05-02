@@ -17,7 +17,7 @@ type Response struct {
 	Body       string            `json:"body,omitempty"`
 }
 
-var log = logrus.New()
+var logger = logrus.New()
 
 /*
 func main() {
@@ -41,7 +41,7 @@ func Main(args map[string]interface{}) *Response {
 
 	if os.Getenv("LOG_LEVEL") != "" {
 		if os.Getenv("LOG_LEVEL") == "debug" {
-			log.SetLevel(logrus.DebugLevel)
+			logger.SetLevel(logrus.DebugLevel)
 		}
 	}
 
@@ -69,13 +69,13 @@ func Main(args map[string]interface{}) *Response {
 		referer = val["referer"].(string)
 	}
 
-	log.WithFields(logrus.Fields{
+	logger.WithFields(logrus.Fields{
 		"ip":         ip,
 		"user-agent": userAgent,
 		"referer":    referer,
-	}).Infof("Running with log level: %s", log.GetLevel())
+	}).Infof("Running with log level: %s", logger.GetLevel())
 
-	log.Infof("Received request to redirect: >%s<", path)
+	logger.Infof("Received request to redirect: >%s<", path)
 
 	emitHeartbeat()
 
@@ -100,7 +100,7 @@ func Main(args map[string]interface{}) *Response {
 	headers := make(map[string]string)
 	headers["location"] = targetURL
 
-	log.Infof("Redirecting to: >%s<", targetURL)
+	logger.Infof("Redirecting to: >%s<", targetURL)
 
 	return &Response{
 		Headers:    headers,
@@ -110,7 +110,7 @@ func Main(args map[string]interface{}) *Response {
 
 func parseRedirectURL(path, ip, userAgent, referer string) (*url.URL, error) {
 
-	log.WithFields(logrus.Fields{
+	logger.WithFields(logrus.Fields{
 		"ip":         ip,
 		"user-agent": userAgent,
 		"referer":    referer,
@@ -119,11 +119,11 @@ func parseRedirectURL(path, ip, userAgent, referer string) (*url.URL, error) {
 	redirectURL, parseErr := url.Parse(path)
 
 	if parseErr != nil {
-		log.Errorf("Unable to parse received URL: >%s<", path)
+		logger.Errorf("Unable to parse received URL: >%s<", path)
 		return nil, fmt.Errorf("Unable to parse received URL: >%s<", path)
 	}
 
-	log.Debugf("Parsed URL: >%s<", redirectURL)
+	logger.Debugf("Parsed URL: >%s<", redirectURL)
 
 	return redirectURL, nil
 }
@@ -132,7 +132,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 
 	s := strings.SplitN(url.Path, "/", 3)
 
-	log.Debugf("Parsed following parts: >%#v<", s)
+	logger.Debugf("Parsed following parts: >%#v<", s)
 
 	// 0 is empty because we split on "/" and the URL begins with "/"
 	// 1 == version
@@ -142,7 +142,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	url.Scheme = "https"
 
 	if len(s) < 3 {
-		log.Errorf("insufficient parts in provided url: >%s<", url.String())
+		logger.Errorf("insufficient parts in provided url: >%s<", url.String())
 
 		// Example:
 		// https://pxy.fi/p/r/5
@@ -153,7 +153,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 
 	_, err := strconv.Atoi(s[1])
 	if err != nil {
-		log.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
+		logger.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
 
 		// Example:
 		// https://pxy.fi/p/r/X
@@ -162,7 +162,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	}
 
 	if s[2] == "" {
-		log.Errorf("second part of url: >%s< is not a string: %q", url.String(), s)
+		logger.Errorf("second part of url: >%s< is not a string: %q", url.String(), s)
 
 		// Example:
 		// https://pxy.fi/p/r/0
@@ -174,7 +174,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 }
 
 func emitHeartbeat() {
-	log.Debug("Emitting heartbeat")
+	logger.Debug("Emitting heartbeat")
 
 	heartbeatToken := os.Getenv("HEARTBEAT_TOKEN")
 
@@ -183,11 +183,11 @@ func emitHeartbeat() {
 	resp, err := http.Get(url)
 
 	if err != nil {
-		log.Errorf("Unable to emit heartbeat: %s", err)
+		logger.Errorf("Unable to emit heartbeat: %s", err)
 	}
 
 	if resp.StatusCode != 200 {
-		log.Errorf("Emitted heartbeat failed: %s", resp.Status)
+		logger.Errorf("Emitted heartbeat failed: %s", resp.Status)
 	}
 	defer resp.Body.Close()
 }
