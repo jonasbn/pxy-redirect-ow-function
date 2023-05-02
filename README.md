@@ -21,7 +21,7 @@ https://<domain>/<version>/tools/clang/docs/DiagnosticsReference.html#<fragment>
 Example:
 
 ```text
-https://pxy.fi/p/r/5/rsanitize-address
+https://pxy.fi/5/rsanitize-address
 ```
 
 Redirects to:
@@ -59,7 +59,7 @@ The URL should consist of 2 parts.
 2. Fragment
 
 ```text
-https://pxy.fi/p/r/<version number>/<fragment>
+https://pxy.fi/<version number>/<fragment>
 ```
 
 Do note the version number is expanded from a single digit to a 3 part version number.
@@ -71,7 +71,7 @@ Luckily command line options (fragments) are only introduced or removed in major
 The first part of the URL should be a number (integer), which is translated to a version number.
 
 ```text
-https://pxy.fi/p/r/<version number>/<fragment>
+https://pxy.fi/<version number>/<fragment>
 ```
 
 Do note the version number is expanded from a single digit to a 3 part version number.
@@ -85,7 +85,7 @@ To my knowledge version ranging from `4.0.0` to `15.0.0` are supported, for refe
 The second part of the URL should be a string.
 
 ```text
-https://pxy.fi/p/r/<version number>/<fragment>
+https://pxy.fi/<version number>/<fragment>
 ```
 
 The second part is the fragment.
@@ -95,7 +95,7 @@ Please visit the [releases.llvm.org][LLVM] website for more details.
 An example of a good fragment, which is available in all versions is: `wall`
 
 ```text
-https://pxy.fi/p/r/4/wall
+https://pxy.fi/4/wall
 ```
 
 Redirects to:
@@ -116,7 +116,7 @@ See the article on [log levels][LOGLEVELS] for more information.
 
 ## Environment Variables
 
-If the environment variable `LOGLEVEL` is specified as `debug` the log level will be set to `DEBUG`.
+If the environment variable `LOG_LEVEL` is specified as `debug` the log level will be set to `DEBUG`.
 
 ## Resources and References
 
