@@ -4,3 +4,8 @@ pxy
 llvm
 serverless
 url
+OpenWhisk
+Nginx
+redirectable
+Uptime
+logtail
