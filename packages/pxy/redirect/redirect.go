@@ -159,7 +159,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	// HACK: 17.0.0 was replaced with 17.0.1
 	// So we have to link to: https://releases.llvm.org/17.0.1/tools/clang/docs/DiagnosticsReference.html
 	// REF: https://github.com/llvm/llvm-project/releases/tag/llvmorg-17.0.1
-	if s[0] == "17" {
+	if s[1] == "17" {
 		patchlevel = 1
 	}
 
