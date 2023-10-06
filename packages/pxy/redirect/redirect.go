@@ -154,6 +154,15 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	url.Host = "pxy.fi"
 	url.Scheme = "https"
 
+	patchlevel := 0
+
+	// HACK: 17.0.0 was replaced with 17.0.1
+	// So we have to link to: https://releases.llvm.org/17.0.1/tools/clang/docs/DiagnosticsReference.html
+	// REF: https://github.com/llvm/llvm-project/releases/tag/llvmorg-17.0.1
+	if s[0] == "17" {
+		patchlevel = 1
+	}
+
 	if len(s) < 3 {
 		logger.Errorf("insufficient parts in provided url: >%s<", url.String())
 
@@ -183,7 +192,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("https://releases.llvm.org/%s.0.0/tools/clang/docs/DiagnosticsReference.html#%s", s[1], s[2]), nil
+	return fmt.Sprintf("https://releases.llvm.org/%s.0.%d/tools/clang/docs/DiagnosticsReference.html#%s", s[1], patchlevel, s[2]), nil
 }
 
 func emitHeartbeat() {
