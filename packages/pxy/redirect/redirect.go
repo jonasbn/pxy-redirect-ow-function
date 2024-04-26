@@ -154,13 +154,25 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	url.Host = "pxy.fi"
 	url.Scheme = "https"
 
-	patchlevel := 0
+	majorlevel := s[1]
+
+	// default patchlevel and minorlevel (see special treatment below)
+	patchlevel := "0"
+	minorlevel := "0"
 
 	// HACK: 17.0.0 was replaced with 17.0.1
 	// So we have to link to: https://releases.llvm.org/17.0.1/tools/clang/docs/DiagnosticsReference.html
 	// REF: https://github.com/llvm/llvm-project/releases/tag/llvmorg-17.0.1
-	if s[1] == "17" {
-		patchlevel = 1
+	if majorlevel == "17" {
+		patchlevel = "1"
+	}
+
+	// HACK: 18.0.0 was released as 18.1.0
+	// We have to link to: https://releases.llvm.org/18.1.0/tools/clang/docs/DiagnosticsReference.html
+	// REF: https://github.com/llvm/llvm-project/releases/tag/llvmorg-18.1.0
+	// They have started making documentation for minor releases
+	if majorlevel == "18" {
+		minorlevel = "1"
 	}
 
 	if len(s) < 3 {
@@ -173,7 +185,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 		return "", err
 	}
 
-	_, err := strconv.Atoi(s[1])
+	_, err := strconv.Atoi(majorlevel)
 	if err != nil {
 		logger.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
 
@@ -183,7 +195,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 		return "", err
 	}
 
-	if s[2] == "" {
+	if minorlevel == "" {
 		logger.Errorf("second part of url: >%s< is not a string: %q", url.String(), s)
 
 		// Example:
@@ -192,7 +204,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("https://releases.llvm.org/%s.0.%d/tools/clang/docs/DiagnosticsReference.html#%s", s[1], patchlevel, s[2]), nil
+	return fmt.Sprintf("https://releases.llvm.org/%s.%s.%s/tools/clang/docs/DiagnosticsReference.html#%s", majorlevel, minorlevel, patchlevel, s[2]), nil
 }
 
 func emitHeartbeat() {
