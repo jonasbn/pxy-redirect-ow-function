@@ -78,7 +78,9 @@ Do note the version number is expanded from a single digit to a 3 part version n
 
 Not all numbers are supported since documentation for all versions is not available.
 
-To my knowledge version ranging from `4.0.0` to `15.0.0` are supported, for reference these would be `4` and `15`.
+To my knowledge version ranging from `4.0.0` to `18.1.0` are supported, for reference these would be `4` and `18`.
+
+Please visit the [releases.llvm.org][LLVM] website for more details and try the service, since the documentation might now be up to date with the service as for the supported versions.
 
 #### **second part of url is not a string**
 
