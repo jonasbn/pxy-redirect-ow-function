@@ -180,7 +180,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 
 		// Example:
 		// https://pxy.fi/p/r/5
-		err := fmt.Errorf("<p>You only made it this far, because the specified URL has insufficient parts to redirect to the documentation</p><p>%s://%s/p/r/<span class=\"my-times\">%s<span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: https://pxy.fi/p/r/13/wall</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1])
+		err := fmt.Errorf("<p>You only made it this far, because the specified URL has insufficient parts to redirect to the documentation</p><p>%s://%s/p/r/<span class=\"my-times\">%s<span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href=\"https://pxy.fi/13/wall\">https://pxy.fi/13/wall</a></p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1])
 
 		return "", err
 	}
@@ -191,7 +191,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 
 		// Example:
 		// https://pxy.fi/p/r/X
-		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a version number as the first part to redirect to the documentation</p><p>%s://%s/p/r/<span class=\"my-times\">%s</span>/%s</p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: https://pxy.fi/p/r/13/wall</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], s[2])
+		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a version number as the first part to redirect to the documentation</p><p>%s://%s/p/r/<span class=\"my-times\">%s</span>/%s</p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href=\"https://pxy.fi/13/wall\">https://pxy.fi/13/wall</a></p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], s[2])
 		return "", err
 	}
 
@@ -200,7 +200,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 
 		// Example:
 		// https://pxy.fi/p/r/0
-		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a part to indicatede the fragment as the second part to redirect to the documentation</p>%s://%s/p/r/%s/<span class=\"my-times\">%s</span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: https://pxy.fi/p/r/13/wall</p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], "x")
+		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a part to indicatede the fragment as the second part to redirect to the documentation</p>%s://%s/p/r/%s/<span class=\"my-times\">%s</span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href=\"https://pxy.fi/13/wall\">https://pxy.fi/13/wall</a></p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], "x")
 		return "", err
 	}
 
