@@ -171,7 +171,8 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	// We have to link to: https://releases.llvm.org/18.1.0/tools/clang/docs/DiagnosticsReference.html
 	// REF: https://github.com/llvm/llvm-project/releases/tag/llvmorg-18.1.0
 	// They have started making documentation for minor releases
-	if majorlevel == "18" {
+	// This pattern continues for future releases: 19, 20 and 21
+	if majorlevel >= "18" {
 		minorlevel = "1"
 	}
 
