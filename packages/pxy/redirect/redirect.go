@@ -160,6 +160,9 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	patchlevel := "0"
 	minorlevel := "0"
 
+	// Convert majorlevel to number to validate it is a number
+	// And we need in for some additional logic, since the releases differ and we need to do some meddling
+	// for versions 17 and up
 	major, err := strconv.Atoi(majorlevel)
 	if err != nil {
 		logger.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
@@ -182,7 +185,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	// We have to link to: https://releases.llvm.org/18.1.0/tools/clang/docs/DiagnosticsReference.html
 	// REF: https://github.com/llvm/llvm-project/releases/tag/llvmorg-18.1.0
 	// They have started making documentation for minor releases
-	// This pattern continues for future releases: 19, 20 and 21
+	// This pattern continues for additional releases: 19, 20 and 21
 	if major >= 18 {
 		minorlevel = "1"
 	}
