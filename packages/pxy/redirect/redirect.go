@@ -160,10 +160,21 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	patchlevel := "0"
 	minorlevel := "0"
 
+	major, err := strconv.Atoi(majorlevel)
+	if err != nil {
+		logger.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
+
+		// Example:
+		// https://pxy.fi/p/r/X
+		err = fmt.Errorf("<p>You only made it this far, because the specified URL requires a version number as the first part to redirect to the documentation</p><p>%s://%s/<span class=\"my-times\">%s</span>/%s</p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href=\"https://pxy.fi/13/wall\">https://pxy.fi/13/wall</a></p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], s[2])
+
+		return "", err
+	}
+
 	// HACK: 17.0.0 was replaced with 17.0.1
 	// So we have to link to: https://releases.llvm.org/17.0.1/tools/clang/docs/DiagnosticsReference.html
 	// REF: https://github.com/llvm/llvm-project/releases/tag/llvmorg-17.0.1
-	if majorlevel == "17" {
+	if major == 17 {
 		patchlevel = "1"
 	}
 
@@ -172,7 +183,7 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	// REF: https://github.com/llvm/llvm-project/releases/tag/llvmorg-18.1.0
 	// They have started making documentation for minor releases
 	// This pattern continues for future releases: 19, 20 and 21
-	if majorlevel >= "18" {
+	if major >= 18 {
 		minorlevel = "1"
 	}
 
@@ -183,16 +194,6 @@ func assembleTargetURL(url *url.URL) (string, error) {
 		// https://pxy.fi/p/r/5
 		err := fmt.Errorf("<p>You only made it this far, because the specified URL has insufficient parts to redirect to the documentation</p><p>%s://%s/<span class=\"my-times\">%s<span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href=\"https://pxy.fi/13/wall\">https://pxy.fi/13/wall</a></p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1])
 
-		return "", err
-	}
-
-	_, err := strconv.Atoi(majorlevel)
-	if err != nil {
-		logger.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
-
-		// Example:
-		// https://pxy.fi/p/r/X
-		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a version number as the first part to redirect to the documentation</p><p>%s://%s/<span class=\"my-times\">%s</span>/%s</p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href=\"https://pxy.fi/13/wall\">https://pxy.fi/13/wall</a></p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], s[2])
 		return "", err
 	}
 
