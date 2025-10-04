@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/sirupsen/logrus"
@@ -289,17 +290,38 @@ func emitHeartbeat() {
 	logger.Debug("Emitting heartbeat")
 
 	heartbeatToken := os.Getenv("HEARTBEAT_TOKEN")
+	heartbeatTarget := os.Getenv("HEARTBEAT_TARGET")
+	heartbeatTargetTimeoutStr := os.Getenv("HEARTBEAT_TARGET_TIMEOUT")
+	heartbeatTargetTimeout := 10 // default timeout in seconds
+	if heartbeatTargetTimeoutStr != "" {
+		if val, err := strconv.Atoi(heartbeatTargetTimeoutStr); err == nil {
+			heartbeatTargetTimeout = val
+		} else {
+			logger.Warnf("Invalid HEARTBEAT_TARGET_TIMEOUT value: %s, using default %d seconds", heartbeatTargetTimeoutStr, heartbeatTargetTimeout)
+		}
+	}
 
-	url := fmt.Sprintf("https://betteruptime.com/api/v1/heartbeat/%s", heartbeatToken)
+	if heartbeatToken == "" {
+		logger.Debug("No heartbeat token configured")
+		return
+	}
 
-	resp, err := http.Get(url)
+	url := fmt.Sprintf("%s%s", heartbeatTarget, heartbeatToken)
+
+	// Create HTTP client with timeout to prevent resource exhaustion
+	client := &http.Client{
+		Timeout: time.Duration(heartbeatTargetTimeout) * time.Second,
+	}
+
+	resp, err := client.Get(url)
 
 	if err != nil {
 		logger.Errorf("Unable to emit heartbeat: %s", err)
+		return
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		logger.Errorf("Emitted heartbeat failed: %s", resp.Status)
 	}
-	defer resp.Body.Close()
 }
