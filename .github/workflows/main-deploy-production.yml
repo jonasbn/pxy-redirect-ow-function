@@ -13,7 +13,8 @@ jobs:
     environment:
       name: production
     env:
-      LOG_DESTINATIONS: ${{ vars.LOG_DESTINATIONS }}
+      HEARTBEAT_TOKEN: ${{ secrets.HEARTBEAT_TOKEN }}
+      LOG_DESTINATIONS: ${{ secrets.LOG_DESTINATIONS }}
       LOG_LEVEL: ${{ vars.LOG_LEVEL }}
 
     steps:
