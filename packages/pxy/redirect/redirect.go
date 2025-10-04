@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"html"
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/sirupsen/logrus"
 )
@@ -23,6 +26,74 @@ type Response struct {
 
 var logger = logrus.New()
 
+// Input validation constants
+const (
+	maxInputLength    = 100
+	maxFragmentLength = 50
+)
+
+// validFragmentPattern matches alphanumeric characters, hyphens, and underscores only
+var validFragmentPattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
+
+// validateInput performs basic input validation and sanitization
+func validateInput(input string, maxLength int) error {
+	if len(input) == 0 {
+		return fmt.Errorf("input cannot be empty")
+	}
+
+	if len(input) > maxLength {
+		return fmt.Errorf("input exceeds maximum length of %d characters", maxLength)
+	}
+
+	if !utf8.ValidString(input) {
+		return fmt.Errorf("input contains invalid UTF-8 characters")
+	}
+
+	return nil
+}
+
+// validateFragment validates the fragment part of the URL
+func validateFragment(fragment string) error {
+	if err := validateInput(fragment, maxFragmentLength); err != nil {
+		return err
+	}
+
+	if !validFragmentPattern.MatchString(fragment) {
+		return fmt.Errorf("fragment contains invalid characters - only alphanumeric, hyphens, and underscores are allowed")
+	}
+
+	return nil
+}
+
+// sanitizeForHTML escapes HTML special characters to prevent XSS
+func sanitizeForHTML(input string) string {
+	return html.EscapeString(input)
+}
+
+// createSafeErrorMessage creates an error message with properly escaped user input
+func createSafeErrorMessage(scheme, host, version, fragment string, messageType string) error {
+	// Sanitize all user-controlled inputs
+	safeScheme := sanitizeForHTML(scheme)
+	safeHost := sanitizeForHTML(host)
+	safeVersion := sanitizeForHTML(version)
+	safeFragment := sanitizeForHTML(fragment)
+
+	switch messageType {
+	case "invalid_version":
+		return fmt.Errorf(`<p>You only made it this far, because the specified URL requires a version number as the first part to redirect to the documentation</p><p>%s://%s/<span class="my-times">%s</span>/%s</p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href="https://pxy.fi/13/wall">https://pxy.fi/13/wall</a></p><p>See more information at: <a href="https://github.com/jonasbn/pxy-redirect-ow-function">GitHub</a></p>`,
+			safeScheme, safeHost, safeVersion, safeFragment)
+	case "insufficient_parts":
+		return fmt.Errorf(`<p>You only made it this far, because the specified URL has insufficient parts to redirect to the documentation</p><p>%s://%s/<span class="my-times">%s</span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href="https://pxy.fi/13/wall">https://pxy.fi/13/wall</a></p><p>See more information at: <a href="https://github.com/jonasbn/pxy-redirect-ow-function">GitHub</a></p>`,
+			safeScheme, safeHost, safeVersion)
+	case "invalid_fragment":
+		return fmt.Errorf(`<p>You only made it this far, because the specified URL requires a valid fragment as the second part to redirect to the documentation</p><p>%s://%s/%s/<span class="my-times">%s</span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href="https://pxy.fi/13/wall">https://pxy.fi/13/wall</a></p><p>See more information at: <a href="https://github.com/jonasbn/pxy-redirect-ow-function">GitHub</a></p>`,
+			safeScheme, safeHost, safeVersion, safeFragment)
+	default:
+		return fmt.Errorf("Invalid URL format. Please check the documentation for proper usage.")
+	}
+}
+
+// Can be uncommented for local testing
 /* func main() {
 	args := make(map[string]interface{})
 	headers := make(map[string]interface{})
@@ -151,10 +222,34 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	// 1 == version
 	// 2 == fragment
 
+	// Check if we have insufficient parts before proceeding
+	if len(s) < 3 {
+		logger.Errorf("insufficient parts in provided url: >%s<", url.String())
+		// Use safe fragment placeholder when not available
+		fragmentPlaceholder := ""
+		if len(s) >= 2 {
+			return "", createSafeErrorMessage(url.Scheme, "pxy.fi", s[1], fragmentPlaceholder, "insufficient_parts")
+		}
+		return "", fmt.Errorf("Invalid URL format. Please check the documentation for proper usage.")
+	}
+
 	url.Host = "pxy.fi"
 	url.Scheme = "https"
 
 	majorlevel := s[1]
+	fragment := s[2]
+
+	// Validate the version part (majorlevel)
+	if err := validateInput(majorlevel, maxInputLength); err != nil {
+		logger.Errorf("invalid version input: %v", err)
+		return "", createSafeErrorMessage(url.Scheme, url.Host, majorlevel, fragment, "invalid_version")
+	}
+
+	// Validate the fragment part
+	if err := validateFragment(fragment); err != nil {
+		logger.Errorf("invalid fragment input: %v", err)
+		return "", createSafeErrorMessage(url.Scheme, url.Host, majorlevel, fragment, "invalid_fragment")
+	}
 
 	// default patchlevel and minorlevel (see special treatment below)
 	patchlevel := "0"
@@ -165,13 +260,8 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	// for versions 17 and up
 	major, err := strconv.Atoi(majorlevel)
 	if err != nil {
-		logger.Errorf("first part of url: >%s< is not a number: %q", url.String(), s)
-
-		// Example:
-		// https://pxy.fi/p/r/X
-		err = fmt.Errorf("<p>You only made it this far, because the specified URL requires a version number as the first part to redirect to the documentation</p><p>%s://%s/<span class=\"my-times\">%s</span>/%s</p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href=\"https://pxy.fi/13/wall\">https://pxy.fi/13/wall</a></p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], s[2])
-
-		return "", err
+		logger.Errorf("first part of url: >%s< is not a number: %q", url.String(), s[1])
+		return "", createSafeErrorMessage(url.Scheme, url.Host, majorlevel, fragment, "invalid_version")
 	}
 
 	// HACK: 17.0.0 was replaced with 17.0.1
@@ -190,26 +280,9 @@ func assembleTargetURL(url *url.URL) (string, error) {
 		minorlevel = "1"
 	}
 
-	if len(s) < 3 {
-		logger.Errorf("insufficient parts in provided url: >%s<", url.String())
-
-		// Example:
-		// https://pxy.fi/p/r/5
-		err := fmt.Errorf("<p>You only made it this far, because the specified URL has insufficient parts to redirect to the documentation</p><p>%s://%s/<span class=\"my-times\">%s<span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href=\"https://pxy.fi/13/wall\">https://pxy.fi/13/wall</a></p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1])
-
-		return "", err
-	}
-
-	if minorlevel == "" {
-		logger.Errorf("second part of url: >%s< is not a string: %q", url.String(), s)
-
-		// Example:
-		// https://pxy.fi/p/r/0
-		err := fmt.Errorf("<p>You only made it this far, because the specified URL requires a part to indicate the fragment as the second part to redirect to the documentation</p>%s://%s/%s/<span class=\"my-times\">%s</span></p><p>In order to get the redirect to work, please specify both a version and a fragment</p><p>Example: <a href=\"https://pxy.fi/13/wall\">https://pxy.fi/13/wall</a></p><p>See more information at: <a href=\"https://github.com/jonasbn/pxy-redirect-ow-function\">GitHub</a></p>", url.Scheme, url.Host, s[1], "x")
-		return "", err
-	}
-
-	return fmt.Sprintf("https://releases.llvm.org/%s.%s.%s/tools/clang/docs/DiagnosticsReference.html#%s", majorlevel, minorlevel, patchlevel, s[2]), nil
+	// Construct the final URL with validated inputs
+	// The fragment is already validated by validateFragment function
+	return fmt.Sprintf("https://releases.llvm.org/%s.%s.%s/tools/clang/docs/DiagnosticsReference.html#%s", majorlevel, minorlevel, patchlevel, fragment), nil
 }
 
 func emitHeartbeat() {
