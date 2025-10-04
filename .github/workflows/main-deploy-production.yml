@@ -8,12 +8,14 @@ permissions:
   contents: read
 
 jobs:
- deploy-app:
-   runs-on: ubuntu-latest
-   steps:
-     - name: Checkout repository
-       uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-     - name: Deploy the app
-       uses: digitalocean/app_action/deploy@f4c57e650e1dec6665ad5d3af739b67b9d31aab1 # v2.0.10
-       with:
-         token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
+  deploy-app:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Deploy the app
+        uses: digitalocean/app_action/deploy@f4c57e650e1dec6665ad5d3af739b67b9d31aab1 # v2.0.10
+        with:
+          token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
