@@ -16,7 +16,8 @@ import (
 )
 
 type ResponseHeaders struct {
-	Location string `json:"location,omitempty"`
+	Location    string `json:"location,omitempty"`
+	ContentType string `json:"content-type,omitempty"`
 }
 
 type Response struct {
@@ -172,7 +173,10 @@ func Main(args map[string]interface{}) Response {
 	if err != nil {
 		return Response{
 			StatusCode: http.StatusInternalServerError, // 500
-			Body:       err.Error(),
+			Headers: ResponseHeaders{
+				ContentType: "text/plain; charset=utf-8",
+			},
+			Body: err.Error(),
 		}
 	}
 
@@ -181,7 +185,10 @@ func Main(args map[string]interface{}) Response {
 	if err != nil {
 		return Response{
 			StatusCode: http.StatusBadRequest, // 400
-			Body:       err.Error(),
+			Headers: ResponseHeaders{
+				ContentType: "text/html; charset=utf-8",
+			},
+			Body: err.Error(),
 		}
 	}
 
@@ -193,7 +200,10 @@ func Main(args map[string]interface{}) Response {
 	}).Infof("Redirecting to: >%s<", targetURL)
 
 	return Response{
-		Headers:    ResponseHeaders{Location: targetURL},
+		Headers: ResponseHeaders{
+			Location:    targetURL,
+			ContentType: "text/plain; charset=utf-8",
+		},
 		StatusCode: http.StatusPermanentRedirect, // 308
 		Body:       "redirecting...",
 	}
