@@ -27,4 +27,4 @@ jobs:
       - name: Extend the doctl client with the serverless plugin
         run: doctl serverless install && doctl serverless connect
       - name: Deploy the app
-        #run: doctl serverless deploy .
+        run: doctl serverless deploy .
