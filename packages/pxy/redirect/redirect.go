@@ -96,7 +96,7 @@ func createSafeErrorMessage(scheme, host, version, fragment string, messageType 
 }
 
 // Can be uncommented for local testing
-func main() {
+/*func main() {
 	args := make(map[string]interface{})
 	headers := make(map[string]interface{})
 
@@ -111,7 +111,7 @@ func main() {
 	resp := Main(args)
 
 	fmt.Printf("Response: %#v\n", resp)
-}
+}*/
 
 func Main(args map[string]interface{}) Response {
 
