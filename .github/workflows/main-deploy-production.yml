@@ -24,7 +24,7 @@ jobs:
         uses: digitalocean/action-doctl@135ac0aa0eed4437d547c6f12c364d3006b42824 # v2.5.1
         with:
           token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
-      - name: Extend the doctl client with the serverless plugin
+      - name: Install the serverless extension for doctl and connect
         run: doctl serverless install && doctl serverless connect
-      - name: Deploy the app
+      - name: Deploy the serverless function
         run: doctl serverless deploy .
