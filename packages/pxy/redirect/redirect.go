@@ -114,6 +114,7 @@ func createSafeErrorMessage(scheme, host, version, fragment string, messageType 
 	fmt.Printf("Response: %#v\n", resp)
 } */
 
+// Main is the entry point for the OpenWhisk action
 func Main(args map[string]interface{}) Response {
 
 	if os.Getenv("LOG_LEVEL") != "" {
@@ -306,12 +307,16 @@ func assembleTargetURL(url *url.URL) (string, error) {
 }
 
 func emitHeartbeat() {
-	logger.Debug("Emitting heartbeat")
 
 	heartbeatToken := os.Getenv("HEARTBEAT_TOKEN")
 	heartbeatTarget := os.Getenv("HEARTBEAT_TARGET")
 	heartbeatTargetTimeoutStr := os.Getenv("HEARTBEAT_TARGET_TIMEOUT")
 	heartbeatTargetTimeout := 10 // default timeout in seconds
+
+	url := fmt.Sprintf("%s%s", heartbeatTarget, heartbeatToken)
+
+	logger.Debug("Emitting heartbeat to URL: ", url)
+
 	if heartbeatTargetTimeoutStr != "" {
 		if val, err := strconv.Atoi(heartbeatTargetTimeoutStr); err == nil {
 			heartbeatTargetTimeout = val
@@ -324,8 +329,6 @@ func emitHeartbeat() {
 		logger.Debug("No heartbeat token configured")
 		return
 	}
-
-	url := fmt.Sprintf("%s%s", heartbeatTarget, heartbeatToken)
 
 	// Create HTTP client with timeout to prevent resource exhaustion
 	client := &http.Client{
