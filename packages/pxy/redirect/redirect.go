@@ -96,22 +96,23 @@ func createSafeErrorMessage(scheme, host, version, fragment string, messageType 
 }
 
 // Can be uncommented for local testing
-/*func main() {
+/* func main() {
 	args := make(map[string]interface{})
 	headers := make(map[string]interface{})
 
+	// https://pxy.fi/6/wc++98-c++11-compat-binary-literal
 	headers["user-agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko)"
 	headers["do-connecting-ip"] = "192.168.1.2"
-	headers["referer"] = "https://pxy.fi/p/r/4/wc++98-compat-bind-to-temporary-copy"
+	headers["referer"] = "https://pxy.fi/6/wc++98-c++11-compat-binary-literal"
 	headers["x-request-id"] = "4d84db433a35256e7fdd395f430a9121"
 
-	args["__ow_path"] = "/4/wc++98-compat-bind-to-temporary-copy"
+	args["__ow_path"] = "/6/wc++98-c++11-compat-binary-literal"
 	args["__ow_headers"] = headers
 
 	resp := Main(args)
 
 	fmt.Printf("Response: %#v\n", resp)
-}*/
+} */
 
 func Main(args map[string]interface{}) Response {
 
@@ -255,6 +256,14 @@ func assembleTargetURL(url *url.URL) (string, error) {
 		logger.Errorf("invalid version input: %v", err)
 		return "", createSafeErrorMessage(url.Scheme, url.Host, majorlevel, fragment, "invalid_version")
 	}
+
+	// Rewrite fragment and replacement of +
+	// The command line flag:
+	// -Wc++98-c++11-compat-binary-literal¶
+	// has the anchor:
+	// wc-98-c-11-compat-binary-literal
+	fragment = strings.ReplaceAll(fragment, "+", "-")
+	fragment = strings.ReplaceAll(fragment, "--", "-")
 
 	// Validate the fragment part
 	if err := validateFragment(fragment); err != nil {
