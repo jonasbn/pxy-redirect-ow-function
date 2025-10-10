@@ -14,6 +14,8 @@ jobs:
       name: production
     env:
       HEARTBEAT_TOKEN: ${{ secrets.HEARTBEAT_TOKEN }}
+      HEARTBEAT_TARGET_URL: ${{ vars.HEARTBEAT_TARGET_URL }}
+      HEARTBEAT_TARGET_TIMEOUT: ${{ vars.HEARTBEAT_TARGET_TIMEOUT }}
       LOG_DESTINATIONS: ${{ secrets.LOG_DESTINATIONS }}
       LOG_LEVEL: ${{ vars.LOG_LEVEL }}
 
