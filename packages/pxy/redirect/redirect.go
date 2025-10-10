@@ -235,19 +235,19 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	// 1 == version
 	// 2 == fragment
 
+	url.Host = "pxy.fi"
+	url.Scheme = "https"
+
 	// Check if we have insufficient parts before proceeding
 	if len(s) < 3 {
 		logger.Errorf("insufficient parts in provided url: >%s<", url.String())
 		// Use safe fragment placeholder when not available
 		fragmentPlaceholder := ""
 		if len(s) >= 2 {
-			return "", createSafeErrorMessage(url.Scheme, "pxy.fi", s[1], fragmentPlaceholder, "insufficient_parts")
+			return "", createSafeErrorMessage(url.Scheme, url.Host, s[1], fragmentPlaceholder, "insufficient_parts")
 		}
 		return "", fmt.Errorf("Invalid URL format. Please check the documentation for proper usage.")
 	}
-
-	url.Host = "pxy.fi"
-	url.Scheme = "https"
 
 	majorlevel := s[1]
 	fragment := s[2]
@@ -301,9 +301,13 @@ func assembleTargetURL(url *url.URL) (string, error) {
 		minorlevel = "1"
 	}
 
+	targetURL := fmt.Sprintf("https://releases.llvm.org/%s.%s.%s/tools/clang/docs/DiagnosticsReference.html#%s", majorlevel, minorlevel, patchlevel, fragment)
+
+	logger.Debug("Constructed the following redirect target URL: ", targetURL)
+
 	// Construct the final URL with validated inputs
 	// The fragment is already validated by validateFragment function
-	return fmt.Sprintf("https://releases.llvm.org/%s.%s.%s/tools/clang/docs/DiagnosticsReference.html#%s", majorlevel, minorlevel, patchlevel, fragment), nil
+	return targetURL, nil
 }
 
 func emitHeartbeat() {
