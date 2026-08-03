@@ -20,3 +20,4 @@ dictionary.dic
 # DigitalOcean
 .deployed
 .env
+.do/app.yaml.draft
