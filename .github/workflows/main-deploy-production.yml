@@ -27,6 +27,6 @@ jobs:
         with:
           token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
       - name: Install the serverless extension for doctl and connect
-        run: doctl serverless install && doctl serverless connect
+        run: doctl serverless install && doctl serverless connect fn-a7240b26-c6c7-46df-808a-71fac192afd8 --access-key ${{ secrets.DIGITAL_OCEAN_FUNCTIONS_ACCESS_KEY }}
       - name: Deploy the serverless function
         run: doctl serverless deploy .
