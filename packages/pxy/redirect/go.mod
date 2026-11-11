@@ -1,6 +1,6 @@
 module github.com/jonasbn/pxy-redirect-ow-function
 
-go 1.20
+go 1.25
 
 require github.com/sirupsen/logrus v1.9.1
 
