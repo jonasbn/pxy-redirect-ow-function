@@ -9,8 +9,8 @@ updates:
     cooldown:
       default-days: 7
   - package-ecosystem: "gomod"
-    # Look for Go code in the `root` directory
-    directory: "/"
+    # The Go module (go.mod) lives in the function directory, not in the root
+    directory: "/packages/pxy/redirect"
     # Check for updates once a week
     schedule:
       interval: "weekly"
