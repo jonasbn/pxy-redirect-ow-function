@@ -13,9 +13,6 @@ Example: `/13/wall` → `https://releases.llvm.org/13.0.0/tools/clang/docs/Diagn
 All commands run from `packages/pxy/redirect/`:
 
 ```sh
-# Build
-go build ./...
-
 # Test
 go test ./...
 
@@ -28,6 +25,8 @@ staticcheck ./...
 # Vet
 go vet ./...
 ```
+
+`go build ./...` is not a valid check here: `main()` is commented out (see Architecture below), so there's nothing to link. `go vet` and `go test` still compile-check the code without needing a linkable binary.
 
 ## Deployment
 
