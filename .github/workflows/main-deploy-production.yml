@@ -18,6 +18,8 @@ jobs:
       HEARTBEAT_TARGET_TIMEOUT: ${{ vars.HEARTBEAT_TARGET_TIMEOUT }}
       LOG_DESTINATIONS: ${{ secrets.LOG_DESTINATIONS }}
       LOG_LEVEL: ${{ vars.LOG_LEVEL }}
+      DIGITAL_OCEAN_SERVERLESS_FUNCTION_ID: ${{ vars.DIGITAL_OCEAN_SERVERLESS_FUNCTION_ID }}
+      DIGITAL_OCEAN_FUNCTIONS_ACCESS_KEY: ${{ secrets.DIGITAL_OCEAN_FUNCTIONS_ACCESS_KEY }}
 
     steps:
       - name: Checkout repository
@@ -46,6 +48,6 @@ jobs:
           token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
           version: "2.6.0"
       - name: Install the serverless extension for doctl and connect
-        run: doctl serverless install && doctl serverless connect fn-a7240b26-c6c7-46df-808a-71fac192afd8 --access-key ${{ secrets.DIGITAL_OCEAN_FUNCTIONS_ACCESS_KEY }}
+        run: doctl serverless install && doctl serverless connect "$DIGITAL_OCEAN_SERVERLESS_FUNCTION_ID" --access-key "$DIGITAL_OCEAN_FUNCTIONS_ACCESS_KEY"
       - name: Deploy the serverless function
         run: doctl serverless deploy .
