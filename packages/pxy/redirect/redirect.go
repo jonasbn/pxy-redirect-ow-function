@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"html"
 	"net/http"
@@ -319,7 +320,8 @@ func emitHeartbeat() {
 
 	url := fmt.Sprintf("%s%s", heartbeatTarget, heartbeatToken)
 
-	logger.Debug("Emitting heartbeat to URL: ", url)
+	// The heartbeat URL embeds the token: only ever log the target, never the full URL
+	logger.Debug("Emitting heartbeat to: ", heartbeatTarget)
 
 	if heartbeatTargetTimeoutStr != "" {
 		if val, err := strconv.Atoi(heartbeatTargetTimeoutStr); err == nil {
@@ -342,7 +344,7 @@ func emitHeartbeat() {
 	resp, err := client.Get(url)
 
 	if err != nil {
-		logger.Errorf("Unable to emit heartbeat to URL: %s, %s", url, err)
+		logger.Errorf("Unable to emit heartbeat to %s: %s", heartbeatTarget, withoutRequestURL(err))
 		return
 	}
 	defer resp.Body.Close()
@@ -350,4 +352,14 @@ func emitHeartbeat() {
 	if resp.StatusCode != 200 {
 		logger.Errorf("Emitting heartbeat failed: %s", resp.Status)
 	}
+}
+
+// withoutRequestURL strips the request URL from errors returned by net/http. They are *url.Error values
+// whose message embeds the full URL, which for the heartbeat includes the token.
+func withoutRequestURL(err error) error {
+	var urlErr *url.Error
+	if errors.As(err, &urlErr) {
+		return fmt.Errorf("%s: %w", urlErr.Op, urlErr.Err)
+	}
+	return err
 }
