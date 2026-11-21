@@ -310,33 +310,47 @@ func assembleTargetURL(url *url.URL) (string, error) {
 	return targetURL, nil
 }
 
+// defaultHeartbeatTimeout is used when HEARTBEAT_TARGET_TIMEOUT is unset or not a positive whole number of seconds.
+const defaultHeartbeatTimeout = 2 * time.Second
+
+// heartbeatTimeout returns the heartbeat HTTP timeout from HEARTBEAT_TARGET_TIMEOUT (seconds).
+// A zero or negative value must not be passed on: http.Client treats a zero Timeout as "no timeout", which would
+// let an unresponsive heartbeat endpoint hold up every request.
+func heartbeatTimeout() time.Duration {
+	value := os.Getenv("HEARTBEAT_TARGET_TIMEOUT")
+	if value == "" {
+		return defaultHeartbeatTimeout
+	}
+
+	seconds, err := strconv.Atoi(value)
+	if err != nil || seconds <= 0 {
+		logger.Warnf("Invalid HEARTBEAT_TARGET_TIMEOUT value: %s, using default %d seconds", value, int(defaultHeartbeatTimeout.Seconds()))
+		return defaultHeartbeatTimeout
+	}
+
+	return time.Duration(seconds) * time.Second
+}
+
 func emitHeartbeat() {
 
 	heartbeatToken := os.Getenv("HEARTBEAT_TOKEN")
 	heartbeatTarget := os.Getenv("HEARTBEAT_TARGET")
-	heartbeatTargetTimeoutStr := os.Getenv("HEARTBEAT_TARGET_TIMEOUT")
-	heartbeatTargetTimeout := 10 // default timeout in seconds
 
 	url := fmt.Sprintf("%s%s", heartbeatTarget, heartbeatToken)
 
 	logger.Debug("Emitting heartbeat to URL: ", url)
-
-	if heartbeatTargetTimeoutStr != "" {
-		if val, err := strconv.Atoi(heartbeatTargetTimeoutStr); err == nil {
-			heartbeatTargetTimeout = val
-		} else {
-			logger.Warnf("Invalid HEARTBEAT_TARGET_TIMEOUT value: %s, using default %d seconds", heartbeatTargetTimeoutStr, heartbeatTargetTimeout)
-		}
-	}
 
 	if heartbeatToken == "" {
 		logger.Debug("No heartbeat token configured")
 		return
 	}
 
-	// Create HTTP client with timeout to prevent resource exhaustion
+	// Create HTTP client with timeout to prevent resource exhaustion.
+	// The heartbeat is sent synchronously, before the redirect is returned: OpenWhisk may freeze the container once the
+	// response is returned, so a background goroutine would not reliably complete. The timeout is therefore the worst
+	// case latency the heartbeat adds to a request.
 	client := &http.Client{
-		Timeout: time.Duration(heartbeatTargetTimeout) * time.Second,
+		Timeout: heartbeatTimeout(),
 	}
 
 	resp, err := client.Get(url)

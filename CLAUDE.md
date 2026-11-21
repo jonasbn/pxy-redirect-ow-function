@@ -65,7 +65,7 @@ CI/CD runs on push to `main` via `.github/workflows/main-deploy-production.yml`.
 | `LOG_DESTINATIONS` | Log shipping destination (Better Stack / Logtail) |
 | `HEARTBEAT_TOKEN` | Auth token for Better Uptime heartbeat |
 | `HEARTBEAT_TARGET` | Heartbeat endpoint URL |
-| `HEARTBEAT_TARGET_TIMEOUT` | HTTP timeout in seconds for heartbeat (default: 10) |
+| `HEARTBEAT_TARGET_TIMEOUT` | HTTP timeout in seconds for heartbeat (default: 2; zero, negative or non-numeric values fall back to the default). The heartbeat is sent before the redirect is returned, so this is the worst case latency it adds |
 
 Configured in `.env` (gitignored) locally and via GitHub Actions secrets/vars in production.
 
